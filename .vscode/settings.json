@@ -1,0 +1,24 @@
+{
+    "json.schemaDownload.enable": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "tsconfig.json": "tsconfig.*.json, env.d.ts",
+        "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
+        "package.json": "package-lock.json, pnpm-lock.yaml, pnpm-workspace.yaml, .eslint*, eslint*, .prettier*, prettier*, .editorconfig",
+        "docker-compose.*": "docker-compose.*, Dockerfile*",
+        ".env": ".env.*",
+        "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.js.map"
+    },
+    "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "js/ts.preferences.importModuleSpecifierEnding": "auto"
+}
