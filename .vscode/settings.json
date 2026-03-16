@@ -12,6 +12,7 @@
         "tsconfig.json": "tsconfig.*.json, env.d.ts",
         "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
         "package.json": "package-lock.json, pnpm-lock.yaml, pnpm-workspace.yaml, .eslint*, eslint*, .prettier*, prettier*, .editorconfig",
+        "opencode.json": "AGENTS.md",
         "docker-compose.*": "docker-compose.*, Dockerfile*",
         ".env": ".env.*",
         "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.js.map"
