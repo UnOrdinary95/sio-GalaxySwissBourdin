@@ -1,0 +1,41 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Dependencies
+node_modules/
+
+# Builds
+.DS_Store
+dist/
+dist-ssr/
+coverage/
+
+# Env
+.env
+.env.local
+.env.*.local
+*.local
+
+# Editor
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# TS
+*.tsbuildinfo
+.eslintcache
+
+# Tests
+/cypress/videos/
+/__screenshots__/
+
+# PNPM monorepo
+.pnp.*
+.pnp.cjs
+# pnpm-lock.yaml
+
+# TODO
+TODO.md
