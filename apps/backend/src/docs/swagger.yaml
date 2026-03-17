@@ -1,0 +1,8 @@
+openapi: 3.1.0
+info:
+    title: GalaxySwissBourdin API
+    description: API pour la gestion des visites médicales et des praticiens du laboratoire GSB.
+    version: 1.0.0
+servers:
+    - url: http://localhost:3100
+      description: Serveur de développement
