@@ -33,8 +33,8 @@
         "build": "tsc -p tsconfig.json",
         "lint": "eslint \"**/*.{ts,js}\"",
         "lint:fix": "eslint \"**/*.{ts,js}\" --fix",
-        "format": "prettier --write \"**/*.{ts,js,json}\"",
-        "format:check": "prettier --check \"**/*.{ts,js,json}\""
+        "format": "prettier --write \"**/*.{ts,js,json}\" --ignore-path ../../.prettierignore",
+        "format:check": "prettier --check \"**/*.{ts,js,json}\" --ignore-path ../../.prettierignore"
     },
     "keywords": [],
     "author": "",

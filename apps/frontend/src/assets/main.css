@@ -76,8 +76,8 @@ a,
 }
 
 :root {
-  --radius: 0.65rem;
-  --section-gap: 160px;
+    --radius: 0.65rem;
+    --section-gap: 160px;
     --background: oklch(1 0 0);
     --foreground: oklch(0.141 0.005 285.823);
     --card: oklch(1 0 0);
@@ -146,22 +146,22 @@ a,
 }
 
 @layer base {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
 
-  * {
-    @apply border-border outline-ring/50;
-  }
+    * {
+        @apply border-border outline-ring/50;
+    }
 
-  body {
-    @apply bg-background text-foreground antialiased;
-    min-height: 100vh;
-    line-height: 1.6;
-    font-family: 'DM Sans', sans-serif;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
+    body {
+        @apply bg-background text-foreground antialiased;
+        min-height: 100vh;
+        line-height: 1.6;
+        font-family: 'DM Sans', sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
 }

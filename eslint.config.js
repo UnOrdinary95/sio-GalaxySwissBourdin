@@ -3,12 +3,17 @@ import tseslint from 'typescript-eslint';
 import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 import pluginVue from 'eslint-plugin-vue';
-import { vueTsConfigs } from '@vue/eslint-config-typescript';
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 
-export default tseslint.config(
+export default defineConfigWithVueTs(
     {
-        ignores: ['**/dist/**', '**/node_modules/**', '**/coverage/**'],
+        ignores: [
+            '**/dist/**',
+            '**/node_modules/**',
+            '**/coverage/**',
+            'apps/frontend/src/components/ui/**',
+        ],
     },
     {
         extends: [js.configs.recommended, ...tseslint.configs.recommended],
@@ -30,7 +35,7 @@ export default tseslint.config(
         files: ['**/*.vue'],
         extends: [
             ...pluginVue.configs['flat/essential'],
-            ...vueTsConfigs.recommended,
+            vueTsConfigs.recommended,
         ],
         languageOptions: {
             globals: { ...globals.browser },

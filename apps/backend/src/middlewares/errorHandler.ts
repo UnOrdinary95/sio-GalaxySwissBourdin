@@ -39,7 +39,8 @@ const errorHandler = (
 ) => {
     const normalizedError = isErrorWithStatus(err) ? err : {};
     const statusCode = getHttpStatusCode(normalizedError.status);
-    const message = normalizedError.message ?? 'Une erreur interne est survenue';
+    const message =
+        normalizedError.message ?? 'Une erreur interne est survenue';
 
     logger.error(
         `Gestionnaire d'erreurs global - ${req.method} ${req.originalUrl}`,

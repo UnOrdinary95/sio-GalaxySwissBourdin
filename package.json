@@ -7,10 +7,25 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "lint": "pnpm -r --if-present run lint",
+        "lint:fix": "pnpm -r --if-present run lint:fix",
+        "format": "pnpm -r --if-present run format",
+        "format:check": "pnpm -r --if-present run format:check",
+        "check": "pnpm lint && pnpm format:check"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "packageManager": "pnpm@10.28.0"
+    "packageManager": "pnpm@10.28.0",
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@vue/eslint-config-prettier": "^10.2.0",
+        "@vue/eslint-config-typescript": "^14.7.0",
+        "eslint": "^10.0.3",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-vue": "^10.8.0",
+        "globals": "^17.4.0",
+        "prettier": "^3.8.1",
+        "typescript-eslint": "^8.57.1"
+    }
 }

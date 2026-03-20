@@ -1,26 +1,26 @@
-import { isProd } from "../constants.js";
-import { appendFileSync } from "fs";
-import { join } from "path";
+import { isProd } from '../constants.js';
+import { appendFileSync } from 'fs';
+import { join } from 'path';
 
-const LOG_FILE = join(process.cwd(), "app.log");
+const LOG_FILE = join(process.cwd(), 'app.log');
 
 const getTimestamp = (): string => {
     const now = new Date();
-    return now.toLocaleString("fr-FR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
+    return now.toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
     });
 };
 
 const writeToFile = (message: string): void => {
     try {
-        appendFileSync(LOG_FILE, message + "\n");
+        appendFileSync(LOG_FILE, message + '\n');
     } catch (err) {
-        console.error("Erreur écriture log:", err);
+        console.error('Erreur écriture log:', err);
     }
 };
 
@@ -29,7 +29,7 @@ const serializeUnknownError = (error: unknown): string => {
         return error.stack ?? error.message;
     }
 
-    if (typeof error === "string") {
+    if (typeof error === 'string') {
         return error;
     }
 
@@ -61,5 +61,5 @@ export const logger = {
         if (!isProd) {
             console.log(logMessage);
         }
-    }
+    },
 };
