@@ -2,6 +2,9 @@
 logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 pnpm-debug.log*
 
 # Dependencies
@@ -30,7 +33,15 @@ coverage/
 
 # Tests
 /cypress/videos/
+/cypress/screenshots/
 /__screenshots__/
+
+# Vite
+*.timestamp-*-*.mjs
+
+# Windows Zone Identifier
+*.Zone.Identifier
+*:Zone.Identifier
 
 # PNPM monorepo
 .pnp.*

@@ -9,7 +9,7 @@
     "eslint.workingDirectories": [{ "mode": "auto" }],
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.patterns": {
-        "tsconfig.json": "tsconfig.*.json, env.d.ts",
+        "tsconfig.json": "tsconfig.*.json, env.d.ts, typed-router.d.ts",
         "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
         "package.json": "package-lock.json, pnpm-lock.yaml, pnpm-workspace.yaml, .eslint*, eslint*, .prettier*, prettier*, .editorconfig",
         "opencode.json": "AGENTS.md",
