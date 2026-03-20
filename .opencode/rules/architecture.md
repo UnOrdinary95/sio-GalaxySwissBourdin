@@ -89,7 +89,7 @@ L'architecture vise à centraliser les contrats, réduire la duplication et impo
 
 ## Architecture Backend (`apps/backend`)
 
-Couches :
+Structure :
 
 - `routes` : déclaration des endpoints HTTP
 - `controllers` : orchestration requête/réponse
@@ -115,7 +115,7 @@ Règles :
 
 ## Architecture Frontend (`apps/frontend`)
 
-Structure recommandée :
+Structure :
 
 - `features/*` : slices UI orientées domaine (pages/composants/composables/services)
 - `router` : définition des routes
