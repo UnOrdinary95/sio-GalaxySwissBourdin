@@ -1,0 +1,27 @@
+{
+    "$schema": "https://json.schemastore.org/package.json",
+    "name": "@gsb/utils",
+    "private": true,
+    "type": "module",
+    "version": "1.0.0",
+    "description": "",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "lint": "eslint \"**/*.{ts,js}\"",
+        "lint:fix": "eslint \"**/*.{ts,js}\" --fix",
+        "format": "prettier --write \"**/*.{ts,js,json}\"",
+        "format:check": "prettier --check \"**/*.{ts,js,json}\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.28.0"
+}
