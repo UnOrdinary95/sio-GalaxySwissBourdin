@@ -1,4 +1,13 @@
-// Générer un ID aléatoire (4 caractères : chiffres + lettres minuscules/majuscules)
+/**
+ * Génère un identifiant visiteur aléatoire de 4 caractères (alphanumériques).
+ * Format: lettres majuscules, minuscules et chiffres.
+ * Utilisé comme clé primaire visiteur en base de données.
+ *
+ * @returns {string} ID aléatoire de 4 caractères (ex: 'A1bC')
+ *
+ * @example
+ * const id = generateId(); // Pourrait donner 'x9Kp'
+ */
 export const generateId = (): string => {
     const chars =
         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

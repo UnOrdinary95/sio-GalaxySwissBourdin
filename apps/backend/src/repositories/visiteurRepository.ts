@@ -8,6 +8,27 @@ import {
 } from '../errors/AppError.js';
 import { generateId } from '../utils/visiteurUtils.js';
 
+/**
+ * Insère un nouveau visiteur en base de données.
+ * Génère automatiquement un ID unique et mappe les erreurs PostgreSQL.
+ *
+ * @param {RegisterInput} input - Données à insérer (login, mdp, nom, prenom, adresse, cp, ville)
+ * @returns {Promise<Visiteur>} Visiteur inséré avec tous les champs
+ * @throws {ConflictError} Si le login existe déjà (contrainte unique violée)
+ * @throws {DatabaseError} Autres erreurs PostgreSQL
+ *
+ * @example
+ * const visiteur = await insertVisiteur({
+ *   login: 'jdupont',
+ *   mdp: 'secret',
+ *   nom: 'Dupont',
+ *   prenom: 'Jean',
+ *   adresse: '123 rue',
+ *   cp: '75001',
+ *   ville: 'Paris'
+ * });
+ * console.log(visiteur.id); // 'x9Kp'
+ */
 export const insertVisiteur = async (
     input: RegisterInput
 ): Promise<Visiteur> => {

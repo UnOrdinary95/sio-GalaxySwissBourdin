@@ -9,6 +9,31 @@ import cookieParser from 'cookie-parser';
 import errorHandler from './middlewares/errorHandler.js';
 import authRouter from './routes/authRouter.js';
 
+/**
+ * Instance Express configurée avec tous les middlewares globaux.
+ * Gère la sécurité (helmet, CORS), le logging (morgan), le parsing de requêtes (JSON, cookies)
+ * et expose la documentation OpenAPI Swagger.
+ *
+ * Middlewares appliqués:
+ * - Helmet: sécurisation des en-têtes HTTP
+ * - Morgan: logging des requêtes HTTP
+ * - CORS: permettre les requêtes du frontend
+ * - Express JSON: parsing des corps JSON
+ * - Cookie Parser: parsing des cookies
+ * - Swagger UI: documentation API interactive sur /docs
+ *
+ * Routes:
+ * - /api/auth: endpoints d'authentification et inscription
+ *
+ * Gestion d'erreurs:
+ * - Middleware global errorHandler pour normaliser les réponses d'erreur
+ *
+ * @type {Express.Application}
+ *
+ * @example
+ * import app from './app.js';
+ * app.listen(3100);
+ */
 const app = express();
 
 app.use(

@@ -26,6 +26,14 @@ const pool = new Pool({
     port: DB_PORT,
 });
 
+/**
+ * Établit la connexion à la base de données PostgreSQL.
+ * Vérifie que la connexion est opérationnelle et log le succès ou l'erreur.
+ * En cas d'échec, arrête le processus (exit 1).
+ *
+ * @returns {Promise<void>}
+ * @throws Provoque un exit(1) en cas d'erreur de connexion (pas d'exception levée)
+ */
 export const connectDb = async () => {
     try {
         const client = await pool.connect();
@@ -37,4 +45,10 @@ export const connectDb = async () => {
     }
 };
 
+/**
+ * Pool de connexions PostgreSQL partagé pour l'ensemble de l'application.
+ * Gère les connexions réutilisables vers la base de données.
+ *
+ * @type {Pool}
+ */
 export default pool;

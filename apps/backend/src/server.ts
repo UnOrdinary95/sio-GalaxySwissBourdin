@@ -4,6 +4,21 @@ import { BACKEND_PORT, isProd } from './constants.js';
 import { logger } from './utils/loggerUtils.js';
 import { connectDb } from './config/db.js';
 
+/**
+ * Point d'entrée: démarrage du serveur backend.
+ * - Charge les variables d'environnement
+ * - Établit la connexion à la base de données
+ * - Démarre le serveur Express sur BACKEND_PORT
+ * - Expose la documentation Swagger sur /docs
+ * - Log les erreurs et arrête le processus en cas d'échec critique
+ *
+ * @returns {Promise<void>}
+ * @throws Aucune exception levée; les erreurs provoquent un exit(1)
+ *
+ * @example
+ * // Script appelé directement au démarrage de l'app
+ * // pnpm --filter @gsb/backend dev
+ */
 const startServer = async () => {
     try {
         console.log(

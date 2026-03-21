@@ -1,6 +1,7 @@
 /**
- * Charge les variables d'environnement depuis le .env à la racine du monorepo
- * Ce fichier doit être importé EN PREMIER dans server.ts
+ * Charge les variables d'environnement depuis le .env à la racine du monorepo.
+ * Ce module doit être importé EN PREMIER dans server.ts pour configurer les variables
+ * avant le démarrage de l'application.
  */
 import { config } from 'dotenv';
 import { existsSync } from 'fs';
