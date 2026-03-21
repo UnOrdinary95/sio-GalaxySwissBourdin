@@ -23,7 +23,7 @@ import authRouter from './routes/authRouter.js';
  * - Swagger UI: documentation API interactive sur /docs
  *
  * Routes:
- * - /api/auth: endpoints d'authentification et inscription
+ * - /api/auth: endpoints d'authentification et inscription (documentés comme /auth en Swagger)
  *
  * Gestion d'erreurs:
  * - Middleware global errorHandler pour normaliser les réponses d'erreur
