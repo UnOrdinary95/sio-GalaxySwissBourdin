@@ -23,7 +23,7 @@ import authRouter from './routes/authRouter.js';
  * - Swagger UI: documentation API interactive sur /docs
  *
  * Routes:
- * - /api/auth: endpoints d'authentification et inscription
+ * - /auth: endpoints d'authentification et inscription
  *
  * Gestion d'erreurs:
  * - Middleware global errorHandler pour normaliser les réponses d'erreur
@@ -68,7 +68,7 @@ const swaggerDocument = YAML.load('src/docs/swagger.yaml');
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use('/api/auth', authRouter);
+app.use('/auth', authRouter);
 
 app.use(errorHandler);
 

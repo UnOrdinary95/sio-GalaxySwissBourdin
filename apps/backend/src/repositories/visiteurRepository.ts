@@ -1,8 +1,10 @@
 import pool from '../config/db.js';
-import type { Visiteur } from '@gsb/types';
-import type { RegisterInput } from '@gsb/types/schemas';
+import type { Visiteur, AuthenticatedVisiteur } from '@gsb/types';
+import type { RegisterInput, LoginInput } from '@gsb/types/schemas';
 import {
+    AppError,
     ConflictError,
+    UnauthorizedError,
     mapDatabaseError,
     type DatabaseErrorPayload,
 } from '../errors/AppError.js';
@@ -56,6 +58,58 @@ export const insertVisiteur = async (
         if (appError instanceof ConflictError) {
             throw new ConflictError('Un visiteur avec ce login existe déjà');
         }
+        throw appError;
+    }
+};
+
+/**
+ * Authentifie un visiteur en vérifiant la validité du couple login/mdp.
+ * Retourne les identifiants (id, login) du visiteur si authentification réussie.
+ *
+ * @param {LoginInput} input - Données d'authentification validées (login, mdp)
+ * @returns {Promise<AuthenticatedVisiteur>} Identifiants du visiteur authentifié
+ * @throws {UnauthorizedError} Si les identifiants sont invalides (login/mdp incorrect)
+ * @throws {DatabaseError} En cas d'erreur base de données
+ *
+ * @example
+ * try {
+ *   const visiteur = await authenticateVisiteur({
+ *     login: 'jdupont',
+ *     mdp: 'password123'
+ *   });
+ *   console.log(visiteur.id); // 'x9Kp'
+ *   // Créer un token JWT avec id et login
+ * } catch (err) {
+ *   if (err instanceof UnauthorizedError) {
+ *     // Identifiants invalides
+ *   }
+ * }
+ */
+export const authenticateVisiteur = async (
+    input: LoginInput
+): Promise<AuthenticatedVisiteur> => {
+    try {
+        const result = await pool.query(
+            `SELECT id, login FROM visiteur WHERE login = $1 AND mdp = $2`,
+            [input.login, input.mdp]
+        );
+
+        if (result.rows.length === 0) {
+            throw new UnauthorizedError('Identifiants invalides');
+        }
+
+        const visiteur = result.rows[0];
+        return {
+            id: visiteur.id,
+            login: visiteur.login,
+        };
+    } catch (error) {
+        // Si c'est déjà une AppError (UnauthorizedError, etc.), la relancer directement
+        if (error instanceof AppError) {
+            throw error;
+        }
+        // Sinon, mapper les erreurs base de données
+        const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
     }
 };

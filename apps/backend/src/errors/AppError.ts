@@ -35,6 +35,17 @@ export class NotFoundError extends AppError {
 }
 
 /**
+ * Erreur levée lors d'une authentification échouée (HTTP 401).
+ * Exemple: identifiants invalides (login/mdp incorrect).
+ */
+export class UnauthorizedError extends AppError {
+    constructor(message: string) {
+        super(message, 401);
+        this.name = 'UnauthorizedError';
+    }
+}
+
+/**
  * Erreur levée lors d'une opération base de données défaillante (HTTP 500).
  * Signale une anomalie de connexion ou d'exécution de requête.
  */

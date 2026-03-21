@@ -1,16 +1,20 @@
 import { Router } from 'express';
 import { validateBody } from '../middlewares/validationHandler.js';
-import { registerInputSchema } from '@gsb/types/schemas';
-import { handlePostVisiteur } from '../controllers/visiteurController.js';
+import { registerInputSchema, loginInputSchema } from '@gsb/types/schemas';
+import {
+    handlePostVisiteur,
+    handleConnectVisiteur,
+} from '../controllers/visiteurController.js';
 
 /**
  * Routeur d'authentification et d'inscription.
- * Gère les endpoints liés aux visiteurs médicaux (création de compte).
+ * Gère les endpoints liés aux visiteurs médicaux (création de compte, connexion).
  *
  * @type {Router}
  *
  * Endpoints:
  * - POST /register - Crée un nouveau compte visiteur
+ * - POST /login - Authentifie un visiteur et retourne un token JWT
  */
 const authRouter = Router();
 
@@ -48,6 +52,45 @@ authRouter.post(
     '/register',
     validateBody(registerInputSchema),
     handlePostVisiteur
+);
+
+/**
+ * POST /login
+ * Authentifie un visiteur avec ses identifiants (login, mdp).
+ * Retourne un token JWT signé pour 1 jour et le pose en cookie httpOnly.
+ *
+ * @param {LoginInput} body - Données d'authentification (login, mdp)
+ * @returns {200} Authentification réussie, cookie token posé
+ * @returns {400} Validation échouée (champs manquants ou format invalide)
+ * @returns {401} Identifiants invalides (login/mdp non trouvés)
+ * @returns {500} Erreur interne serveur
+ *
+ * @example
+ * POST /api/auth/login
+ * Content-Type: application/json
+ *
+ * {
+ *   "login": "jdupont",
+ *   "mdp": "password123"
+ * }
+ *
+ * Response 200:
+ * {
+ *   "success": true,
+ *   "message": "Connexion réussie"
+ * }
+ * Set-Cookie: token=<jwt>; HttpOnly; ...
+ *
+ * Response 401:
+ * {
+ *   "success": true,
+ *   "message": "Identifiants invalides"
+ * }
+ */
+authRouter.post(
+    '/login',
+    validateBody(loginInputSchema),
+    handleConnectVisiteur
 );
 
 export default authRouter;
