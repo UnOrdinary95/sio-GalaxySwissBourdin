@@ -8,6 +8,7 @@ import { FRONTEND_PORT, isProd } from './constants.js';
 import cookieParser from 'cookie-parser';
 import errorHandler from './middlewares/errorHandler.js';
 import authRouter from './routes/authRouter.js';
+import medecinRouter from './routes/medecinRouter.js';
 
 /**
  * Instance Express configurée avec tous les middlewares globaux.
@@ -69,6 +70,7 @@ const swaggerDocument = YAML.load('src/docs/swagger.yaml');
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/auth', authRouter);
+app.use('/medecins', medecinRouter);
 
 app.use(errorHandler);
 
