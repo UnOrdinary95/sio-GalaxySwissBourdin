@@ -35,3 +35,31 @@ export const registerInputSchema = z.object({
  * Représente les données validées d'inscription d'un visiteur.
  */
 export type RegisterInput = z.infer<typeof registerInputSchema>;
+
+/**
+ * Schéma Zod de validation pour la connexion d'un visiteur existant.
+ * Valide les identifiants (login + mdp) selon les contraintes SQL.
+ * - login: maximum 20 caractères (aligné sur la table visiteur)
+ * - mdp: maximum 20 caractères (aligné sur la table visiteur)
+ *
+ * Utilisé pour authentifier un visiteur avant génération de token JWT.
+ *
+ * @example
+ * const data = { login: 'jdupont', mdp: 'secret' };
+ * const result = loginInputSchema.safeParse(data);
+ * if (result.success) {
+ *   const validatedInput = result.data; // LoginInput
+ * }
+ */
+export const loginInputSchema = z.object({
+    login: z.string().max(20, 'Le login ne doit pas dépasser 20 caractères'),
+    mdp: z
+        .string()
+        .max(20, 'Le mot de passe ne doit pas dépasser 20 caractères'),
+});
+
+/**
+ * Type TypeScript inféré du schéma `loginInputSchema`.
+ * Représente les données validées de connexion d'un visiteur.
+ */
+export type LoginInput = z.infer<typeof loginInputSchema>;

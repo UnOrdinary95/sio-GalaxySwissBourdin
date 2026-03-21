@@ -31,3 +31,18 @@ export type Visiteur = {
     /** Ticket ou voucher d'authentification (nullable) */
     ticket: string | null;
 };
+
+/**
+ * Identifiants minimaux d'un visiteur authentifié.
+ * Utilisé pour générer les tokens JWT et maintenir les sessions.
+ *
+ * @example
+ * type AuthPayload = AuthenticatedVisiteur;
+ * const payload: AuthPayload = { id: 'x9Kp', login: 'jdupont' };
+ */
+export type AuthenticatedVisiteur = {
+    /** Identifiant unique du visiteur */
+    id: string;
+    /** Login du visiteur */
+    login: string;
+};

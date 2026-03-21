@@ -4,4 +4,9 @@
  * et pour fournir des types TypeScript déduits aux consommateurs.
  */
 
-export { registerInputSchema, type RegisterInput } from './visiteur.js';
+export {
+    registerInputSchema,
+    type RegisterInput,
+    loginInputSchema,
+    type LoginInput,
+} from './visiteur.js';
