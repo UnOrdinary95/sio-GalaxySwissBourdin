@@ -60,3 +60,9 @@
 
 - Politique de commentaires minimaux. Le code doit être auto-explicite.
 - Utiliser des commentaires uniquement pour expliquer le "pourquoi" de logiques complexes.
+
+## Langue de l'application
+
+- L'application est en français.
+- Tous les textes destinés à l'utilisateur doivent être en français.
+- Les commentaires dans le code doivent également être en français pour maintenir la cohérence linguistique.
