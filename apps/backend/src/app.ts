@@ -7,6 +7,7 @@ import YAML from 'yamljs';
 import { FRONTEND_PORT, isProd } from './constants.js';
 import cookieParser from 'cookie-parser';
 import errorHandler from './middlewares/errorHandler.js';
+import authRouter from './routes/authRouter.js';
 
 const app = express();
 
@@ -41,6 +42,8 @@ app.use(cookieParser()); // Parse les cookies
 const swaggerDocument = YAML.load('src/docs/swagger.yaml');
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use('/api/auth', authRouter);
 
 app.use(errorHandler);
 

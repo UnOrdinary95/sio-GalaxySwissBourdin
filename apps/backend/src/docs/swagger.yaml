@@ -6,3 +6,275 @@ info:
 servers:
     - url: http://localhost:3100
       description: Serveur de développement
+
+tags:
+    - name: Auth
+      description: Authentification et création de compte
+
+paths:
+    /api/auth/register:
+        post:
+            tags:
+                - Auth
+            summary: Créer un compte visiteur
+            description: Crée un nouveau compte visiteur médical. **Middlewares:** validateBody(registerInputSchema)
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RegisterInput'
+                        examples:
+                            valid:
+                                summary: Exemple valide
+                                value:
+                                    nom: Dupont
+                                    prenom: Jean
+                                    login: jdupont
+                                    mdp: password123
+                                    adresse: 123 Rue de Paris
+                                    cp: '75001'
+                                    ville: Paris
+            responses:
+                '201':
+                    description: Visiteur créé avec succès
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiSuccessVisiteur'
+                            examples:
+                                success:
+                                    $ref: '#/components/examples/ExampleRegisterSuccess'
+                '400':
+                    description: Erreur de validation (format/type invalide)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiValidationError'
+                            examples:
+                                missingField:
+                                    $ref: '#/components/examples/ErrZodMissingField'
+                                fieldTooLong:
+                                    $ref: '#/components/examples/ErrZodFieldTooLong'
+                '409':
+                    description: Conflit - Un visiteur avec ce login existe déjà
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                conflict:
+                                    $ref: '#/components/examples/ErrConflictLoginExists'
+                '500':
+                    description: Erreur serveur interne
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                internal:
+                                    $ref: '#/components/examples/ErrDatabaseInternal'
+
+components:
+    schemas:
+        RegisterInput:
+            type: object
+            required:
+                - nom
+                - prenom
+                - login
+                - mdp
+                - adresse
+                - cp
+                - ville
+            properties:
+                nom:
+                    type: string
+                    maxLength: 30
+                    description: Nom du visiteur
+                prenom:
+                    type: string
+                    maxLength: 30
+                    description: Prénom du visiteur
+                login:
+                    type: string
+                    maxLength: 20
+                    description: Identifiant unique de connexion
+                mdp:
+                    type: string
+                    maxLength: 20
+                    description: Mot de passe
+                adresse:
+                    type: string
+                    maxLength: 30
+                    description: Adresse du visiteur
+                cp:
+                    type: string
+                    minLength: 5
+                    maxLength: 5
+                    pattern: '^\d{5}$'
+                    description: Code postal (5 chiffres)
+                ville:
+                    type: string
+                    maxLength: 30
+                    description: Ville du visiteur
+
+        Visiteur:
+            type: object
+            required:
+                - id
+                - nom
+                - prenom
+                - login
+                - mdp
+                - adresse
+                - cp
+                - ville
+                - timespan
+            properties:
+                id:
+                    type: string
+                    maxLength: 4
+                    description: Identifiant unique généré (4 caractères alphanumériques)
+                nom:
+                    type: string
+                    maxLength: 30
+                    nullable: true
+                    description: Nom du visiteur
+                prenom:
+                    type: string
+                    maxLength: 30
+                    nullable: true
+                    description: Prénom du visiteur
+                login:
+                    type: string
+                    maxLength: 20
+                    nullable: true
+                    description: Identifiant de connexion
+                mdp:
+                    type: string
+                    maxLength: 20
+                    nullable: true
+                    description: Mot de passe
+                adresse:
+                    type: string
+                    maxLength: 30
+                    nullable: true
+                    description: Adresse
+                cp:
+                    type: string
+                    maxLength: 5
+                    nullable: true
+                    description: Code postal
+                ville:
+                    type: string
+                    maxLength: 30
+                    nullable: true
+                    description: Ville
+                dateEmbauche:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: Date d'embauche
+                timespan:
+                    type: integer
+                    format: int64
+                    description: Timestamp ou durée (initialisé à 0 à la création)
+                ticket:
+                    type: string
+                    maxLength: 50
+                    nullable: true
+                    description: Token ou ticket de session
+
+        ApiSuccessVisiteur:
+            type: object
+            required:
+                - success
+                - data
+                - message
+            properties:
+                success:
+                    type: boolean
+                    enum: [true]
+                data:
+                    $ref: '#/components/schemas/Visiteur'
+                message:
+                    type: string
+                    description: Message de confirmation
+
+        ApiValidationError:
+            type: object
+            required:
+                - success
+                - errors
+            properties:
+                success:
+                    type: boolean
+                    enum: [false]
+                errors:
+                    type: object
+                    description: Erreurs de validation par champ
+                    additionalProperties:
+                        type: array
+                        items:
+                            type: string
+
+        ApiErrorMessage:
+            type: object
+            required:
+                - success
+                - message
+            properties:
+                success:
+                    type: boolean
+                    enum: [false]
+                message:
+                    type: string
+                    description: Message d'erreur
+
+    examples:
+        ExampleRegisterSuccess:
+            summary: Création réussie
+            value:
+                success: true
+                data:
+                    id: aBc1
+                    nom: Dupont
+                    prenom: Jean
+                    login: jdupont
+                    mdp: password123
+                    adresse: 123 Rue de Paris
+                    cp: '75001'
+                    ville: Paris
+                    dateEmbauche: null
+                    timespan: 0
+                    ticket: null
+                message: Visiteur créé avec succès
+
+        ErrZodMissingField:
+            summary: Champ requis manquant
+            value:
+                success: false
+                errors:
+                    login:
+                        - Le login est requis
+
+        ErrZodFieldTooLong:
+            summary: Champ trop long
+            value:
+                success: false
+                errors:
+                    nom:
+                        - Le nom ne doit pas dépasser 30 caractères
+
+        ErrConflictLoginExists:
+            summary: Login déjà utilisé
+            value:
+                success: false
+                message: Un visiteur avec ce login existe déjà
+
+        ErrDatabaseInternal:
+            summary: Erreur interne base de données
+            value:
+                success: false
+                message: Erreur base de données
