@@ -4,17 +4,19 @@ import { registerInputSchema, loginInputSchema } from '@gsb/types/schemas';
 import {
     handlePostVisiteur,
     handleConnectVisiteur,
+    handleLogoutVisiteur,
 } from '../controllers/visiteurController.js';
 
 /**
  * Routeur d'authentification et d'inscription.
- * Gère les endpoints liés aux visiteurs médicaux (création de compte, connexion).
+ * Gère les endpoints liés aux visiteurs médicaux (création de compte, connexion, déconnexion).
  *
  * @type {Router}
  *
  * Endpoints:
  * - POST /register - Crée un nouveau compte visiteur
  * - POST /login - Authentifie un visiteur et retourne un token JWT
+ * - POST /logout - Déconnecte un visiteur (supprime le cookie token)
  */
 const authRouter = Router();
 
@@ -92,5 +94,25 @@ authRouter.post(
     validateBody(loginInputSchema),
     handleConnectVisiteur
 );
+
+/**
+ * POST /logout
+ * Déconnecte un visiteur en supprimant le cookie token.
+ * Retourne toujours 200 (opération idempotente).
+ *
+ * @returns {200} Déconnexion réussie
+ * @returns {500} Erreur interne serveur (rare)
+ *
+ * @example
+ * POST /api/auth/logout
+ *
+ * Response 200:
+ * {
+ *   "success": true,
+ *   "message": "Déconnexion réussie"
+ * }
+ * Set-Cookie: token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0
+ */
+authRouter.post('/logout', handleLogoutVisiteur);
 
 export default authRouter;

@@ -139,6 +139,38 @@ paths:
                                 internal:
                                     $ref: '#/components/examples/ErrDatabaseInternal'
 
+    /auth/logout:
+        post:
+            tags:
+                - Auth
+            summary: Déconnecter un visiteur
+            description: Supprime le cookie token et déconnecte le visiteur. Opération idempotente (retourne toujours 200). **Middlewares:** Aucun
+            responses:
+                '200':
+                    description: Déconnexion réussie
+                    headers:
+                        Set-Cookie:
+                            schema:
+                                type: string
+                                example: 'token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0'
+                            description: Cookie token supprimé (Max-Age=0)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiSuccessMessage'
+                            examples:
+                                success:
+                                    $ref: '#/components/examples/ExampleLogoutSuccess'
+                '500':
+                    description: Erreur serveur interne
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                internal:
+                                    $ref: '#/components/examples/ErrDatabaseInternal'
+
 components:
     schemas:
         RegisterInput:
@@ -348,6 +380,12 @@ components:
             value:
                 success: true
                 message: Connexion réussie
+
+        ExampleLogoutSuccess:
+            summary: Déconnexion réussie
+            value:
+                success: true
+                message: Déconnexion réussie
 
         ErrZodMissingField:
             summary: Champ requis manquant

@@ -87,3 +87,31 @@ export const handleConnectVisiteur = async (
         next(error);
     }
 };
+
+/**
+ * Contrôleur HTTP pour la déconnexion d'un visiteur.
+ * Supprime le cookie token et retourne toujours 200 (opération idempotente).
+ *
+ * @param {Request} req - Requête Express
+ * @param {Response} res - Réponse Express
+ * @returns {void}
+ *
+ * @example
+ * // POST /api/auth/logout
+ *
+ * Response 200:
+ * {
+ *   "success": true,
+ *   "message": "Déconnexion réussie"
+ * }
+ * Set-Cookie: token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0
+ */
+export const handleLogoutVisiteur = (req: Request, res: Response) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? 'lax' : 'none',
+    });
+
+    return res.status(200).json(makeSuccess(undefined, 'Déconnexion réussie'));
+};
