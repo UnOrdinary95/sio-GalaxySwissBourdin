@@ -10,3 +10,4 @@ export type { Medicament } from './Medicament.js';
 export type { Offrir } from './Offrir.js';
 export type { Rapport } from './Rapport.js';
 export type { Visiteur, AuthenticatedVisiteur } from './Visiteur.js';
+export type { PaginatedResponse } from './PaginatedResponse.js';
