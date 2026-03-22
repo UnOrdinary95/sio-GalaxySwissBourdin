@@ -13,4 +13,5 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url)),
         },
     },
+    envDir: '../../', // Permet de charger les variables d'environnement depuis la racine du projet
 });
