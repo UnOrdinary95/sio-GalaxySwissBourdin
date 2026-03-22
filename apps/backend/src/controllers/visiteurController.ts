@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import type { ApiResponse, Visiteur } from '@gsb/types';
 import { makeSuccess } from '../utils/apiResponseUtils.js';
 import { postVisiteur, loginVisiteur } from '../services/visiteurService.js';
 import { isProd } from '../constants.js';
@@ -8,21 +9,23 @@ import { isProd } from '../constants.js';
  * Orchestre la requête HTTP → service métier → réponse JSON.
  *
  * @param {Request} req - Requête Express avec body validé (RegisterInput)
- * @param {Response} res - Réponse Express
+ * @param {Response} res - Réponse Express typée ApiResponse<Visiteur>
  * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
- * @returns {Promise<void>}
- * @throws {AppError} Propage les erreurs métier au middleware d'erreurs global
+ * @returns {Promise<Response<ApiResponse<Visiteur>> | undefined>}
+ * @throws {ConflictError} Si le login existe déjà
+ * @throws {AppError} Autres erreurs métier propagées au middleware d'erreurs global
  *
  * @example
- * // Appelé par le middleware validationHandler après validation du body
- * // req.body contient déjà: { login, mdp, nom, prenom, adresse, cp, ville }
- * // Réponse 201 JSON avec le visiteur créé
+ * // POST /auth/register
+ * // req.body validé: { login, mdp, nom, prenom, adresse, cp, ville }
+ * // Réponse 201 JSON:
+ * // { success: true, data: { id, nom, prenom, login, ... }, message: "Visiteur créé avec succès" }
  */
 export const handlePostVisiteur = async (
     req: Request,
-    res: Response,
+    res: Response<ApiResponse<Visiteur>>,
     next: NextFunction
-) => {
+): Promise<Response<ApiResponse<Visiteur>> | undefined> => {
     try {
         const visiteur = await postVisiteur(req.body);
         return res
@@ -39,36 +42,24 @@ export const handlePostVisiteur = async (
  * et crée un cookie httpOnly pour maintenir la session.
  *
  * @param {Request} req - Requête Express avec body validé (LoginInput: login, mdp)
- * @param {Response} res - Réponse Express
+ * @param {Response} res - Réponse Express typée ApiResponse<null>
  * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
- * @returns {Promise<void>}
- * @throws {UnauthorizedError} Propage les erreurs d'authentification au middleware d'erreurs global
+ * @returns {Promise<Response<ApiResponse<null>> | undefined>}
+ * @throws {UnauthorizedError} Si les identifiants sont invalides (login/mdp incorrect)
+ * @throws {DatabaseError} Autres erreurs base de données propagées au middleware d'erreurs global
  *
  * @example
- * // Appelé par le middleware validationHandler après validation du body
- * // req.body contient déjà: { login, mdp }
- * // Réponse 200 JSON avec message de succès + cookie "token" posé
- * // En cas d'identifiants invalides: erreur 401 propagée à errorHandler
- *
- * POST /api/auth/login
- * Content-Type: application/json
- * {
- *   "login": "jdupont",
- *   "mdp": "password123"
- * }
- *
- * Response 200:
- * {
- *   "success": true,
- *   "message": "Connexion réussie"
- * }
- * Set-Cookie: token=<jwt>; HttpOnly; Secure; SameSite=Lax; Max-Age=86400000
+ * // POST /auth/login
+ * // req.body validé: { login, mdp }
+ * // Réponse 200 JSON (données vides, token dans cookie):
+ * // { success: true, message: "Connexion réussie" }
+ * // Set-Cookie: token=<jwt>; HttpOnly; Secure; SameSite=Lax; Max-Age=86400000
  */
 export const handleConnectVisiteur = async (
     req: Request,
-    res: Response,
+    res: Response<ApiResponse<null>>,
     next: NextFunction
-) => {
+): Promise<Response<ApiResponse<null>> | undefined> => {
     try {
         const result = await loginVisiteur(req.body);
 
@@ -93,20 +84,19 @@ export const handleConnectVisiteur = async (
  * Supprime le cookie token et retourne toujours 200 (opération idempotente).
  *
  * @param {Request} req - Requête Express
- * @param {Response} res - Réponse Express
- * @returns {void}
+ * @param {Response} res - Réponse Express typée ApiResponse<null>
+ * @returns {Response<ApiResponse<null>>}
  *
  * @example
- * // POST /api/auth/logout
- *
- * Response 200:
- * {
- *   "success": true,
- *   "message": "Déconnexion réussie"
- * }
- * Set-Cookie: token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0
+ * // POST /auth/logout
+ * // Réponse 200 JSON (données vides, cookie supprimé):
+ * // { success: true, message: "Déconnexion réussie" }
+ * // Set-Cookie: token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0
  */
-export const handleLogoutVisiteur = (req: Request, res: Response) => {
+export const handleLogoutVisiteur = (
+    req: Request,
+    res: Response<ApiResponse<null>>
+): Response<ApiResponse<null>> => {
     res.clearCookie('token', {
         httpOnly: true,
         secure: isProd,

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import type { ApiResponse, PaginatedResponse, Medecin } from '@gsb/types';
 import { makeSuccess } from '../utils/apiResponseUtils.js';
 import { getMedecinPage } from '../services/medecinService.js';
 
@@ -10,21 +11,30 @@ import { getMedecinPage } from '../services/medecinService.js';
  * - `offset` (optionnel, par défaut 0): nombre de médecins à ignorer
  *
  * @param {Request} req - Requête Express avec query params
- * @param {Response} res - Réponse Express
+ * @param {Response} res - Réponse Express typée ApiResponse<PaginatedResponse<Medecin>>
  * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
- * @returns {Promise<void>}
- * @throws {DatabaseError} Propage les erreurs métier au middleware d'erreurs global
+ * @returns {Promise<Response<ApiResponse<PaginatedResponse<Medecin>>> | undefined>}
+ * @throws {DatabaseError} Erreurs base de données propagées au middleware d'erreurs global
  *
  * @example
  * // GET /medecins?offset=0
  * // Réponse 200:
- * // { success: true, data: { items: [...], total: 1000, limit: 30, offset: 0 } }
+ * // {
+ * //   success: true,
+ * //   data: {
+ * //     items: [{ id, nom, prenom, adresse, ... }, ...],
+ * //     total: 1000,
+ * //     limit: 30,
+ * //     offset: 0
+ * //   },
+ * //   message: "Liste des médecins récupérée"
+ * // }
  */
 export const handleGetMedecins = async (
     req: Request,
-    res: Response,
+    res: Response<ApiResponse<PaginatedResponse<Medecin>>>,
     next: NextFunction
-) => {
+): Promise<Response<ApiResponse<PaginatedResponse<Medecin>>> | undefined> => {
     try {
         // Récupérer le paramètre offset (peut être undefined si absent)
         const offsetParam = req.query.offset as string | undefined;
@@ -36,11 +46,11 @@ export const handleGetMedecins = async (
         // Cas 4: GET /medecins?offset=abc → offsetParam = "abc" → parseInt = NaN → Math.max(0, NaN) = 0 (gère erreurs)
         const offset = offsetParam ? Math.max(0, parseInt(offsetParam, 10)) : 0;
 
-        const result = await getMedecinPage(offset);
+        const medecins = await getMedecinPage(offset);
 
         return res
             .status(200)
-            .json(makeSuccess(result, 'Liste des médecins récupérée'));
+            .json(makeSuccess(medecins, 'Liste des médecins récupérée'));
     } catch (error) {
         next(error);
     }
