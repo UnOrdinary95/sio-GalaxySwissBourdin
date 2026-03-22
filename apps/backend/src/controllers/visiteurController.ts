@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import type { ApiResponse, Visiteur } from '@gsb/types';
+import type { ApiResponse, VisiteurPublic } from '@gsb/types';
 import { makeSuccess } from '../utils/apiResponseUtils.js';
 import { postVisiteur, loginVisiteur } from '../services/visiteurService.js';
 import { isProd } from '../constants.js';
@@ -9,28 +9,28 @@ import { isProd } from '../constants.js';
  * Orchestre la requête HTTP → service métier → réponse JSON.
  *
  * @param {Request} req - Requête Express avec body validé (RegisterInput)
- * @param {Response} res - Réponse Express typée ApiResponse<Visiteur>
+ * @param {Response} res - Réponse Express typée ApiResponse<null>
  * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
- * @returns {Promise<Response<ApiResponse<Visiteur>> | undefined>}
+ * @returns {Promise<Response<ApiResponse<null>> | undefined>}
  * @throws {ConflictError} Si le login existe déjà
  * @throws {AppError} Autres erreurs métier propagées au middleware d'erreurs global
  *
  * @example
  * // POST /auth/register
  * // req.body validé: { login, mdp, nom, prenom, adresse, cp, ville }
- * // Réponse 201 JSON:
- * // { success: true, data: { id, nom, prenom, login, ... }, message: "Visiteur créé avec succès" }
+ * // Réponse 201 JSON (sans données):
+ * // { success: true, message: "Visiteur créé avec succès" }
  */
 export const handlePostVisiteur = async (
     req: Request,
-    res: Response<ApiResponse<Visiteur>>,
+    res: Response<ApiResponse<null>>,
     next: NextFunction
-): Promise<Response<ApiResponse<Visiteur>> | undefined> => {
+): Promise<Response<ApiResponse<null>> | undefined> => {
     try {
-        const visiteur = await postVisiteur(req.body);
+        await postVisiteur(req.body);
         return res
             .status(201)
-            .json(makeSuccess(visiteur, 'Visiteur créé avec succès'));
+            .json(makeSuccess(undefined, 'Visiteur créé avec succès'));
     } catch (error) {
         next(error);
     }
@@ -38,42 +38,40 @@ export const handlePostVisiteur = async (
 
 /**
  * Contrôleur HTTP pour l'authentification d'un visiteur.
- * Orchestre la vérification des identifiants, génère un token JWT
- * et crée un cookie httpOnly pour maintenir la session.
+ * Orchestre la vérification des identifiants, génère un token JWT,
+ * crée un cookie httpOnly et retourne le profil public.
  *
  * @param {Request} req - Requête Express avec body validé (LoginInput: login, mdp)
- * @param {Response} res - Réponse Express typée ApiResponse<null>
+ * @param {Response} res - Réponse Express typée ApiResponse<VisiteurPublic>
  * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
- * @returns {Promise<Response<ApiResponse<null>> | undefined>}
+ * @returns {Promise<Response<ApiResponse<VisiteurPublic>> | undefined>}
  * @throws {UnauthorizedError} Si les identifiants sont invalides (login/mdp incorrect)
  * @throws {DatabaseError} Autres erreurs base de données propagées au middleware d'erreurs global
  *
  * @example
  * // POST /auth/login
  * // req.body validé: { login, mdp }
- * // Réponse 200 JSON (données vides, token dans cookie):
- * // { success: true, message: "Connexion réussie" }
+ * // Réponse 200 JSON (avec données profil, token dans cookie):
+ * // { success: true, data: { id, nom, prenom, ... }, message: "Connexion réussie" }
  * // Set-Cookie: token=<jwt>; HttpOnly; Secure; SameSite=Lax; Max-Age=86400000
  */
 export const handleConnectVisiteur = async (
     req: Request,
-    res: Response<ApiResponse<null>>,
+    res: Response<ApiResponse<VisiteurPublic>>,
     next: NextFunction
-): Promise<Response<ApiResponse<null>> | undefined> => {
+): Promise<Response<ApiResponse<VisiteurPublic>> | undefined> => {
     try {
-        const result = await loginVisiteur(req.body);
+        const { token, visiteur } = await loginVisiteur(req.body);
 
         // Poser le cookie token (httpOnly, valide 1 jour)
-        res.cookie('token', result.token, {
+        res.cookie('token', token, {
             httpOnly: true,
             secure: isProd,
             sameSite: isProd ? 'lax' : 'none', // 'lax' en prod (protection CSRF), 'none' en dev (autorise les requêtes cross-origin localhost)
             maxAge: 24 * 60 * 60 * 1000, // 1 jour en millisecondes
         });
 
-        return res
-            .status(200)
-            .json(makeSuccess(undefined, 'Connexion réussie'));
+        return res.status(200).json(makeSuccess(visiteur, 'Connexion réussie'));
     } catch (error) {
         next(error);
     }

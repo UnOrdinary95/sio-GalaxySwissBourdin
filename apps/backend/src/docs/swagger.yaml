@@ -43,7 +43,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ApiSuccessVisiteur'
+                                $ref: '#/components/schemas/ApiSuccessMessage'
                             examples:
                                 success:
                                     $ref: '#/components/examples/ExampleRegisterSuccess'
@@ -97,7 +97,7 @@ paths:
                                     mdp: password123
             responses:
                 '200':
-                    description: Authentification réussie, cookie token posé
+                    description: Authentification réussie, cookie token posé, profil retourné
                     headers:
                         Set-Cookie:
                             schema:
@@ -107,7 +107,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ApiSuccessMessage'
+                                $ref: '#/components/schemas/ApiSuccessVisiteurPublic'
                             examples:
                                 success:
                                     $ref: '#/components/examples/ExampleLoginSuccess'
@@ -350,6 +350,74 @@ components:
                     type: string
                     description: Message de confirmation
 
+        VisiteurPublic:
+            type: object
+            required:
+                - id
+                - nom
+                - prenom
+                - login
+                - adresse
+                - cp
+                - ville
+                - dateEmbauche
+            properties:
+                id:
+                    type: string
+                    maxLength: 4
+                    description: Identifiant unique généré (4 caractères alphanumériques)
+                nom:
+                    type: string
+                    maxLength: 30
+                    nullable: true
+                    description: Nom du visiteur
+                prenom:
+                    type: string
+                    maxLength: 30
+                    nullable: true
+                    description: Prénom du visiteur
+                login:
+                    type: string
+                    maxLength: 20
+                    nullable: true
+                    description: Identifiant de connexion
+                adresse:
+                    type: string
+                    maxLength: 30
+                    nullable: true
+                    description: Adresse
+                cp:
+                    type: string
+                    maxLength: 5
+                    nullable: true
+                    description: Code postal
+                ville:
+                    type: string
+                    maxLength: 30
+                    nullable: true
+                    description: Ville
+                dateEmbauche:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: Date d'embauche
+
+        ApiSuccessVisiteurPublic:
+            type: object
+            required:
+                - success
+                - data
+                - message
+            properties:
+                success:
+                    type: boolean
+                    enum: [true]
+                data:
+                    $ref: '#/components/schemas/VisiteurPublic'
+                message:
+                    type: string
+                    description: Message de confirmation
+
         ApiSuccessMessage:
             type: object
             required:
@@ -467,24 +535,21 @@ components:
             summary: Création réussie
             value:
                 success: true
-                data:
-                    id: aBc1
-                    nom: Dupont
-                    prenom: Jean
-                    login: jdupont
-                    mdp: password123
-                    adresse: 123 Rue de Paris
-                    cp: '75001'
-                    ville: Paris
-                    dateEmbauche: null
-                    timespan: 0
-                    ticket: null
                 message: Visiteur créé avec succès
 
         ExampleLoginSuccess:
             summary: Authentification réussie
             value:
                 success: true
+                data:
+                    id: aBc1
+                    nom: Dupont
+                    prenom: Jean
+                    login: jdupont
+                    adresse: 123 Rue de Paris
+                    cp: '75001'
+                    ville: Paris
+                    dateEmbauche: '2020-06-15'
                 message: Connexion réussie
 
         ExampleLogoutSuccess:

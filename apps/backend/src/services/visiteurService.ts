@@ -1,4 +1,4 @@
-import type { Visiteur, AuthenticatedVisiteur } from '@gsb/types';
+import type { VisiteurPublic, AuthenticatedVisiteur } from '@gsb/types';
 import type { RegisterInput, LoginInput } from '@gsb/types/schemas';
 import {
     insertVisiteur,
@@ -18,31 +18,32 @@ export type AuthTokenPayload = AuthenticatedVisiteur;
 
 /**
  * Cas d'usage métier: créer un nouveau visiteur médical.
- * Délègue l'insertion à la couche repository.
+ * Délègue l'insertion à la couche repository sans retourner les données.
  *
  * @param {RegisterInput} input - Données d'inscription validées
- * @returns {Promise<Visiteur>} Visiteur créé avec l'ID auto-généré
+ * @returns {Promise<void>} Insertion effectuée
  * @throws {ConflictError} Si le login existe déjà
  * @throws {DatabaseError} En cas d'erreur persistance
  *
  * @example
- * const visiteur = await postVisiteur({
+ * await postVisiteur({
  *   login: 'jdupont',
  *   mdp: 'secret',
  *   nom: 'Dupont',
  *   // ...
  * });
+ * // Compte créé avec succès, pas de données retournées
  */
-export const postVisiteur = async (input: RegisterInput): Promise<Visiteur> => {
-    return await insertVisiteur(input);
+export const postVisiteur = async (input: RegisterInput): Promise<void> => {
+    await insertVisiteur(input);
 };
 
 /**
  * Cas d'usage métier: authentifier un visiteur et générer un token JWT.
- * Vérifie les identifiants en base puis signe un token JWT valide 1 jour.
+ * Vérifie les identifiants en base, récupère le profil public et signe un token JWT valide 1 jour.
  *
  * @param {LoginInput} input - Données de connexion validées (login, mdp)
- * @returns {Promise<{ token: string }>} Token JWT signé
+ * @returns {Promise<{ token: string, visiteur: VisiteurPublic }>} Token JWT et profil public
  * @throws {UnauthorizedError} Si les identifiants sont invalides (login/mdp incorrect)
  * @throws {Error} Si JWT_SECRET n'est pas configurée en variables d'environnement
  * @throws {DatabaseError} En cas d'erreur base de données
@@ -54,6 +55,7 @@ export const postVisiteur = async (input: RegisterInput): Promise<Visiteur> => {
  *     mdp: 'password123'
  *   });
  *   console.log(result.token); // JWT valide 1 jour
+ *   console.log(result.visiteur.nom); // Dupont
  * } catch (err) {
  *   if (err instanceof UnauthorizedError) {
  *     // Identifiants invalides
@@ -62,7 +64,8 @@ export const postVisiteur = async (input: RegisterInput): Promise<Visiteur> => {
  */
 export const loginVisiteur = async (
     input: LoginInput
-): Promise<{ token: string }> => {
+): Promise<{ token: string; visiteur: VisiteurPublic }> => {
+    // Authentifier et récupérer le profil public
     const visiteur = await authenticateVisiteur(input);
 
     const jwtSecret = process.env.JWT_SECRET;
@@ -74,12 +77,12 @@ export const loginVisiteur = async (
 
     const payload: AuthTokenPayload = {
         id: visiteur.id,
-        login: visiteur.login,
+        login: visiteur.login as string,
     };
 
     const token = jwt.sign(payload, jwtSecret, {
         expiresIn: '1d',
     });
 
-    return { token };
+    return { token, visiteur };
 };

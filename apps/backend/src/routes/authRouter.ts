@@ -25,7 +25,7 @@ const authRouter = Router();
  * Enregistre un nouveau visiteur médical.
  *
  * @param {RegisterInput} body - Données d'inscription (login, mdp, nom, prenom, etc.)
- * @returns {201} Visiteur créé avec succès
+ * @returns {201} Visiteur créé avec succès (sans retour de données)
  * @throws {400} Validation échouée
  * @throws {409} Visiteur existant (login en doublon)
  *
@@ -46,7 +46,6 @@ const authRouter = Router();
  * Response 201:
  * {
  *   "success": true,
- *   "data": { "id": "x9Kp", "login": "jdupont", ... },
  *   "message": "Visiteur créé avec succès"
  * }
  */
@@ -59,10 +58,10 @@ authRouter.post(
 /**
  * POST /login
  * Authentifie un visiteur avec ses identifiants (login, mdp).
- * Retourne un token JWT signé pour 1 jour et le pose en cookie httpOnly.
+ * Retourne un token JWT signé pour 1 jour en cookie httpOnly et le profil public.
  *
  * @param {LoginInput} body - Données d'authentification (login, mdp)
- * @returns {200} Authentification réussie, cookie token posé
+ * @returns {200} Authentification réussie, cookie token posé, profil retourné
  * @returns {400} Validation échouée (champs manquants ou format invalide)
  * @returns {401} Identifiants invalides (login/mdp non trouvés)
  * @returns {500} Erreur interne serveur
@@ -79,13 +78,23 @@ authRouter.post(
  * Response 200:
  * {
  *   "success": true,
+ *   "data": {
+ *     "id": "x9Kp",
+ *     "nom": "Dupont",
+ *     "prenom": "Jean",
+ *     "login": "jdupont",
+ *     "adresse": "123 Rue de Paris",
+ *     "cp": "75001",
+ *     "ville": "Paris",
+ *     "dateEmbauche": "2020-06-15"
+ *   },
  *   "message": "Connexion réussie"
  * }
  * Set-Cookie: token=<jwt>; HttpOnly; ...
  *
  * Response 401:
  * {
- *   "success": true,
+ *   "success": false,
  *   "message": "Identifiants invalides"
  * }
  */

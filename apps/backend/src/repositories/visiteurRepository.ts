@@ -1,5 +1,5 @@
 import pool from '../config/db.js';
-import type { Visiteur, AuthenticatedVisiteur } from '@gsb/types';
+import type { VisiteurPublic } from '@gsb/types';
 import type { RegisterInput, LoginInput } from '@gsb/types/schemas';
 import {
     AppError,
@@ -15,12 +15,12 @@ import { generateId } from '../utils/visiteurUtils.js';
  * Génère automatiquement un ID unique et mappe les erreurs PostgreSQL.
  *
  * @param {RegisterInput} input - Données à insérer (login, mdp, nom, prenom, adresse, cp, ville)
- * @returns {Promise<Visiteur>} Visiteur inséré avec tous les champs
+ * @returns {Promise<void>} Insertion effectuée (aucune donnée retournée)
  * @throws {ConflictError} Si le login existe déjà (contrainte unique violée)
  * @throws {DatabaseError} Autres erreurs PostgreSQL
  *
  * @example
- * const visiteur = await insertVisiteur({
+ * await insertVisiteur({
  *   login: 'jdupont',
  *   mdp: 'secret',
  *   nom: 'Dupont',
@@ -29,16 +29,14 @@ import { generateId } from '../utils/visiteurUtils.js';
  *   cp: '75001',
  *   ville: 'Paris'
  * });
- * console.log(visiteur.id); // 'x9Kp'
+ * // Insertion réussie, pas de retour de données
  */
-export const insertVisiteur = async (
-    input: RegisterInput
-): Promise<Visiteur> => {
+export const insertVisiteur = async (input: RegisterInput): Promise<void> => {
     try {
         const id = generateId();
-        const result = await pool.query(
+        await pool.query(
             `INSERT INTO visiteur (id, nom, prenom, login, mdp, adresse, cp, ville, timespan)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
             [
                 id,
                 input.nom,
@@ -51,8 +49,6 @@ export const insertVisiteur = async (
                 0,
             ]
         );
-
-        return result.rows[0];
     } catch (error) {
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         if (appError instanceof ConflictError) {
@@ -63,22 +59,24 @@ export const insertVisiteur = async (
 };
 
 /**
- * Authentifie un visiteur en vérifiant la validité du couple login/mdp.
- * Retourne les identifiants (id, login) du visiteur si authentification réussie.
+ * Authentifie un visiteur et retourne son profil public.
+ * Vérifie la validité du couple login/mdp et retourne les données métier utiles au client,
+ * excluant les champs sensibles (mdp, ticket, timespan).
  *
  * @param {LoginInput} input - Données d'authentification validées (login, mdp)
- * @returns {Promise<AuthenticatedVisiteur>} Identifiants du visiteur authentifié
+ * @returns {Promise<VisiteurPublic>} Profil public du visiteur authentifié
  * @throws {UnauthorizedError} Si les identifiants sont invalides (login/mdp incorrect)
  * @throws {DatabaseError} En cas d'erreur base de données
  *
  * @example
  * try {
- *   const visiteur = await authenticateVisiteur({
+ *   const profil = await authenticateVisiteur({
  *     login: 'jdupont',
  *     mdp: 'password123'
  *   });
- *   console.log(visiteur.id); // 'x9Kp'
- *   // Créer un token JWT avec id et login
+ *   console.log(profil.nom); // 'Dupont'
+ *   // Inclut: id, nom, prenom, login, adresse, cp, ville, dateEmbauche
+ *   // Exclut: mdp, ticket, timespan
  * } catch (err) {
  *   if (err instanceof UnauthorizedError) {
  *     // Identifiants invalides
@@ -87,10 +85,11 @@ export const insertVisiteur = async (
  */
 export const authenticateVisiteur = async (
     input: LoginInput
-): Promise<AuthenticatedVisiteur> => {
+): Promise<VisiteurPublic> => {
     try {
         const result = await pool.query(
-            `SELECT id, login FROM visiteur WHERE login = $1 AND mdp = $2`,
+            `SELECT id, nom, prenom, login, adresse, cp, ville, dateEmbauche
+             FROM visiteur WHERE login = $1 AND mdp = $2`,
             [input.login, input.mdp]
         );
 
@@ -98,11 +97,7 @@ export const authenticateVisiteur = async (
             throw new UnauthorizedError('Identifiants invalides');
         }
 
-        const visiteur = result.rows[0];
-        return {
-            id: visiteur.id,
-            login: visiteur.login,
-        };
+        return result.rows[0];
     } catch (error) {
         // Si c'est déjà une AppError (UnauthorizedError, etc.), la relancer directement
         if (error instanceof AppError) {
