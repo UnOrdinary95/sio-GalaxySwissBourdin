@@ -1,14 +1,14 @@
 import api from '@/lib/axios';
-import type { ApiResponse, Visiteur } from '@gsb/types';
+import type { ApiResponse, VisiteurPublic } from '@gsb/types';
 import type { RegisterInput, LoginInput } from '@gsb/types/schemas';
 
 /**
- * Crée un nouveau visiteur
+ * Crée un nouveau visiteur (inscription)
  */
 export const createVisiteur = async (
     registerInput: RegisterInput
-): Promise<ApiResponse<Visiteur>> => {
-    const response = await api.post<ApiResponse<Visiteur>>(
+): Promise<ApiResponse<null>> => {
+    const response = await api.post<ApiResponse<null>>(
         '/auth/register',
         registerInput
     );
@@ -16,12 +16,12 @@ export const createVisiteur = async (
 };
 
 /**
- * Authentifie un visiteur
+ * Authentifie un visiteur et retourne son profil public
  */
 export const connectVisiteur = async (
     loginInput: LoginInput
-): Promise<ApiResponse<null>> => {
-    const response = await api.post<ApiResponse<null>>(
+): Promise<ApiResponse<VisiteurPublic>> => {
+    const response = await api.post<ApiResponse<VisiteurPublic>>(
         '/auth/login',
         loginInput
     );
