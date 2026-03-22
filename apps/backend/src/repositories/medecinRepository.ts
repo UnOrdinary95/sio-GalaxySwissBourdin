@@ -15,11 +15,11 @@ import {
  * @throws {DatabaseError} En cas d'erreur lors de la requête
  *
  * @example
- * const result = await getMedecinsPaginated(30, 0);
+ * const result = await findManyMedecinPaginated(30, 0);
  * console.log(result.items.length); // <= 30
  * console.log(result.total); // Nombre total de médecins en base
  */
-export const getMedecinsPaginated = async (
+export const findManyMedecinPaginated = async (
     limit: number,
     offset: number
 ): Promise<{ items: Medecin[]; total: number }> => {

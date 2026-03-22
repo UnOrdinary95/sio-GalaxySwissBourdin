@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import type { ApiResponse, PaginatedResponse, Medecin } from '@gsb/types';
 import { makeSuccess } from '../utils/apiResponseUtils.js';
-import { getMedecinPage } from '../services/medecinService.js';
+import { getMedecinsPaginated } from '../services/medecinService.js';
 
 /**
  * Contrôleur HTTP pour récupérer une liste paginée de médecins.
@@ -30,7 +30,7 @@ import { getMedecinPage } from '../services/medecinService.js';
  * //   message: "Liste des médecins récupérée"
  * // }
  */
-export const handleGetMedecins = async (
+export const handleGetMedecinsPaginated = async (
     req: Request,
     res: Response<ApiResponse<PaginatedResponse<Medecin>>>,
     next: NextFunction
@@ -46,7 +46,7 @@ export const handleGetMedecins = async (
         // Cas 4: GET /medecins?offset=abc → offsetParam = "abc" → parseInt = NaN → Math.max(0, NaN) = 0 (gère erreurs)
         const offset = offsetParam ? Math.max(0, parseInt(offsetParam, 10)) : 0;
 
-        const medecins = await getMedecinPage(offset);
+        const medecins = await getMedecinsPaginated(offset);
 
         return res
             .status(200)

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { handleGetMedecins } from '../controllers/medecinController.js';
+import { handleGetMedecinsPaginated } from '../controllers/medecinController.js';
 
 /**
  * Routeur pour les endpoints liés aux médecins.
@@ -39,6 +39,6 @@ const medecinRouter = Router();
  *   "message": "Liste des médecins récupérée"
  * }
  */
-medecinRouter.get('/', handleGetMedecins);
+medecinRouter.get('/', handleGetMedecinsPaginated);
 
 export default medecinRouter;
