@@ -17,17 +17,33 @@ import { z } from 'zod';
  * }
  */
 export const registerInputSchema = z.object({
-    nom: z.string().max(30, 'Le nom ne doit pas dépasser 30 caractères'),
-    prenom: z.string().max(30, 'Le prénom ne doit pas dépasser 30 caractères'),
-    login: z.string().max(20, 'Le login ne doit pas dépasser 20 caractères'),
+    nom: z
+        .string()
+        .min(1, 'Le nom est obligatoire')
+        .max(30, 'Le nom ne doit pas dépasser 30 caractères'),
+    prenom: z
+        .string()
+        .min(1, 'Le prénom est obligatoire')
+        .max(30, 'Le prénom ne doit pas dépasser 30 caractères'),
+    login: z
+        .string()
+        .min(1, 'Le login est obligatoire')
+        .max(20, 'Le login ne doit pas dépasser 20 caractères'),
     mdp: z
         .string()
+        .min(1, 'Le mot de passe est obligatoire')
         .max(20, 'Le mot de passe ne doit pas dépasser 20 caractères'),
-    adresse: z.string().max(30, "L'adresse ne doit pas dépasser 30 caractères"),
+    adresse: z
+        .string()
+        .min(1, "L'adresse est obligatoire")
+        .max(30, "L'adresse ne doit pas dépasser 30 caractères"),
     cp: z
         .string()
         .length(5, 'Le code postal doit contenir exactement 5 caractères'),
-    ville: z.string().max(30, 'La ville ne doit pas dépasser 30 caractères'),
+    ville: z
+        .string()
+        .min(1, 'La ville est obligatoire')
+        .max(30, 'La ville ne doit pas dépasser 30 caractères'),
 });
 
 /**
@@ -52,9 +68,13 @@ export type RegisterInput = z.infer<typeof registerInputSchema>;
  * }
  */
 export const loginInputSchema = z.object({
-    login: z.string().max(20, 'Le login ne doit pas dépasser 20 caractères'),
+    login: z
+        .string()
+        .min(1, 'Le login est obligatoire')
+        .max(20, 'Le login ne doit pas dépasser 20 caractères'),
     mdp: z
         .string()
+        .min(1, 'Le mot de passe est obligatoire')
         .max(20, 'Le mot de passe ne doit pas dépasser 20 caractères'),
 });
 
