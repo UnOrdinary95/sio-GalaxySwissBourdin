@@ -1,11 +1,50 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Search } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
+import { Search, LogOut, User } from 'lucide-vue-next';
+import { toast } from 'vue-sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useAuthStore } from '@/stores/authStore.js';
+import { logoutVisiteur } from '@/services/visiteurService.js';
 
+/** État de la requête de recherche */
 const searchQuery = ref('');
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+// Gère la déconnexion : appel API, réinitialisation de l'auth, redirection vers login
+const handleLogout = async () => {
+    try {
+        const response = await logoutVisiteur();
+
+        if (!response.success) {
+            toast.error('Erreur', {
+                description: 'Impossible de se déconnecter.',
+            });
+            return;
+        }
+
+        authStore.setAuth(null);
+        toast.success('Déconnexion réussie');
+        await router.push('/login');
+    } catch (error) {
+        const message =
+            error instanceof Error ? error.message : 'Erreur de déconnexion';
+        toast.error('Erreur', {
+            description: message,
+        });
+    }
+};
 </script>
 
 <template>
@@ -42,10 +81,52 @@ const searchQuery = ref('');
                 </div>
             </div>
 
-            <!-- Boutons connexion/inscription à droite -->
+            <!-- Boutons connexion/inscription ou avatar (non connecté/connecté) -->
             <div class="flex shrink-0 gap-3">
-                <Button type="button" variant="outline"> Connexion </Button>
-                <Button type="button" variant="default"> Inscription </Button>
+                <template v-if="!authStore.isLoggedIn">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        @click="router.push('/login')"
+                    >
+                        Connexion
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="default"
+                        @click="router.push('/register')"
+                    >
+                        Inscription
+                    </Button>
+                </template>
+                <template v-else>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                            <button
+                                class="flex items-center justify-center focus-visible:outline-none cursor-pointer"
+                                :aria-label="`Menu utilisateur ${authStore.visiteurPublic?.prenom}`"
+                            >
+                                <Avatar class="h-10 w-10 border-2 border-black">
+                                    <AvatarFallback
+                                        class="text-base font-semibold"
+                                    >
+                                        {{ authStore.getInitiales() }}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem disabled>
+                                <User class="h-4 w-4" />
+                                Profil
+                            </DropdownMenuItem>
+                            <DropdownMenuItem @click="handleLogout">
+                                <LogOut class="h-4 w-4" />
+                                Déconnexion
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </template>
             </div>
         </div>
 
