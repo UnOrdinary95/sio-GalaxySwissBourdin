@@ -46,3 +46,40 @@ export type AuthenticatedVisiteur = {
     /** Login du visiteur */
     login: string;
 };
+
+/**
+ * Profil public d'un visiteur (données renvoyées après login).
+ * Exclut les champs sensibles : mdp, ticket, timespan.
+ * Utilisé dans la réponse d'authentification pour donner au client
+ * les informations de profil nécessaires sans compromettre la sécurité.
+ *
+ * @example
+ * const profile: VisiteurPublic = {
+ *   id: 'x9Kp',
+ *   nom: 'Dupont',
+ *   prenom: 'Jean',
+ *   login: 'jdupont',
+ *   adresse: '123 Rue de Paris',
+ *   cp: '75001',
+ *   ville: 'Paris',
+ *   dateEmbauche: '2020-06-15'
+ * };
+ */
+export type VisiteurPublic = {
+    /** Identifiant unique de 4 caractères alphanumériques */
+    id: string;
+    /** Nom de famille */
+    nom: string | null;
+    /** Prénom */
+    prenom: string | null;
+    /** Login unique d'authentification */
+    login: string | null;
+    /** Adresse complète du domicile */
+    adresse: string | null;
+    /** Code postal (5 chiffres) */
+    cp: string | null;
+    /** Localité/ville */
+    ville: string | null;
+    /** Date d'embauche au format ISO 8601 */
+    dateEmbauche: string | null;
+};
