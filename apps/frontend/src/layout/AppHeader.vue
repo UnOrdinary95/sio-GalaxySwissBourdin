@@ -25,14 +25,7 @@ const authStore = useAuthStore();
 // Gère la déconnexion : appel API, réinitialisation de l'auth, redirection vers login
 const handleLogout = async () => {
     try {
-        const response = await logoutVisiteur();
-
-        if (!response.success) {
-            toast.error('Erreur', {
-                description: 'Impossible de se déconnecter.',
-            });
-            return;
-        }
+        await logoutVisiteur();
 
         authStore.setAuth(null);
         toast.success('Déconnexion réussie', {
