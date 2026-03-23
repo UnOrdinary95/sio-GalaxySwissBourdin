@@ -3,6 +3,7 @@ import type { RegisterInput, LoginInput } from '@gsb/types/schemas';
 import {
     insertVisiteur,
     authenticateVisiteur,
+    findUniqueVisiteur,
 } from '../repositories/visiteurRepository.js';
 import jwt from 'jsonwebtoken';
 
@@ -85,4 +86,29 @@ export const loginVisiteur = async (
     });
 
     return { token, visiteur };
+};
+
+/**
+ * Cas d'usage métier: récupérer le profil public de l'utilisateur authentifié.
+ * Utilisé par l'endpoint /auth/me pour vérifier la session courante.
+ *
+ * @param {string} id - Identifiant du visiteur extrait du JWT
+ * @returns {Promise<VisiteurPublic>} Profil public du visiteur authentifié
+ * @throws {NotFoundError} Si le visiteur n'est pas trouvé
+ * @throws {DatabaseError} En cas d'erreur base de données
+ *
+ * @example
+ * try {
+ *   const profil = await getCurrentVisiteur('x9Kp');
+ *   console.log(profil.nom); // 'Dupont'
+ * } catch (err) {
+ *   if (err instanceof NotFoundError) {
+ *     // Visiteur introuvable
+ *   }
+ * }
+ */
+export const getCurrentVisiteur = async (
+    id: string
+): Promise<VisiteurPublic> => {
+    return await findUniqueVisiteur(id);
 };

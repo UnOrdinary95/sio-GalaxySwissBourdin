@@ -4,6 +4,7 @@ import type { RegisterInput, LoginInput } from '@gsb/types/schemas';
 import {
     AppError,
     ConflictError,
+    NotFoundError,
     UnauthorizedError,
     mapDatabaseError,
     type DatabaseErrorPayload,
@@ -104,6 +105,49 @@ export const authenticateVisiteur = async (
             throw error;
         }
         // Sinon, mapper les erreurs base de données
+        const appError = mapDatabaseError(error as DatabaseErrorPayload);
+        throw appError;
+    }
+};
+
+/**
+ * Récupère un visiteur par son identifiant unique.
+ * Retourne uniquement les données publiques (exclut mdp, ticket, timespan).
+ *
+ * @param {string} id - Identifiant unique du visiteur (4 caractères)
+ * @returns {Promise<VisiteurPublic>} Profil public du visiteur
+ * @throws {NotFoundError} Si le visiteur n'est pas trouvé
+ * @throws {DatabaseError} En cas d'erreur base de données
+ *
+ * @example
+ * try {
+ *   const profil = await findUniqueVisiteur('x9Kp');
+ *   console.log(profil.nom); // 'Dupont'
+ * } catch (err) {
+ *   if (err instanceof NotFoundError) {
+ *     // Visiteur introuvable
+ *   }
+ * }
+ */
+export const findUniqueVisiteur = async (
+    id: string
+): Promise<VisiteurPublic> => {
+    try {
+        const result = await pool.query(
+            `SELECT id, nom, prenom, login, adresse, cp, ville, dateEmbauche
+             FROM visiteur WHERE id = $1`,
+            [id]
+        );
+
+        if (result.rows.length === 0) {
+            throw new NotFoundError('Visiteur non trouvé');
+        }
+
+        return result.rows[0];
+    } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
     }

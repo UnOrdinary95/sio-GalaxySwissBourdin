@@ -173,6 +173,45 @@ paths:
                                 internal:
                                     $ref: '#/components/examples/ErrDatabaseInternal'
 
+    /auth/me:
+        get:
+            tags:
+                - Auth
+            summary: Récupérer le profil de l'utilisateur authentifié
+            description: Retourne le profil public de l'utilisateur authentifié. Utilisé pour vérifier l'état de la session (ex: au chargement de l'application). **Middlewares:** requireAuth
+            responses:
+                '200':
+                    description: Connexion réussie
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiSuccessVisiteurPublic'
+                            examples:
+                                success:
+                                    $ref: '#/components/examples/ExampleMeSuccess'
+                '401':
+                    description: Non authentifié (token manquant, invalide ou expiré)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                missingToken:
+                                    $ref: '#/components/examples/ErrAuthTokenMissing'
+                                invalidToken:
+                                    $ref: '#/components/examples/ErrAuthTokenInvalid'
+                                expiredToken:
+                                    $ref: '#/components/examples/ErrAuthTokenExpired'
+                '500':
+                    description: Erreur serveur interne
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                internal:
+                                    $ref: '#/components/examples/ErrDatabaseInternal'
+
     /medecins:
         get:
             tags:
@@ -601,6 +640,39 @@ components:
             value:
                 success: false
                 message: Un visiteur avec ce login existe déjà
+
+        ExampleMeSuccess:
+            summary: Connexion réussie
+            value:
+                success: true
+                data:
+                    id: aBc1
+                    nom: Dupont
+                    prenom: Jean
+                    login: jdupont
+                    adresse: 123 Rue de Paris
+                    cp: '75001'
+                    ville: Paris
+                    dateEmbauche: '2020-06-15'
+                message: Connexion réussie
+
+        ErrAuthTokenMissing:
+            summary: Token manquant
+            value:
+                success: false
+                message: Token manquant
+
+        ErrAuthTokenInvalid:
+            summary: Token invalide
+            value:
+                success: false
+                message: Token invalide
+
+        ErrAuthTokenExpired:
+            summary: Token expiré
+            value:
+                success: false
+                message: Token expiré
 
         ErrDatabaseInternal:
             summary: Erreur interne base de données

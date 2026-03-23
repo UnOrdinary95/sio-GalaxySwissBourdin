@@ -5,7 +5,9 @@ import {
     handlePostVisiteur,
     handleConnectVisiteur,
     handleLogoutVisiteur,
+    handleGetCurrentVisiteur,
 } from '../controllers/visiteurController.js';
+import { requireAuth } from '../middlewares/requireAuth.js';
 
 /**
  * Routeur d'authentification et d'inscription.
@@ -123,5 +125,42 @@ authRouter.post(
  * Set-Cookie: token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0
  */
 authRouter.post('/logout', handleLogoutVisiteur);
+
+/**
+ * GET /me
+ * Retourne le profil public de l'utilisateur authentifié.
+ * Utilisé pour vérifier l'état de la session (ex: au chargement de l'application).
+ *
+ * @returns {200} Profil public du visiteur authentifié
+ * @returns {401} Non authentifié (token manquant, invalide ou expiré)
+ * @returns {500} Erreur interne serveur
+ *
+ * @example
+ * GET /api/auth/me
+ * Cookie: token=<jwt>
+ *
+ * Response 200:
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "id": "x9Kp",
+ *     "nom": "Dupont",
+ *     "prenom": "Jean",
+ *     "login": "jdupont",
+ *     "adresse": "123 Rue de Paris",
+ *     "cp": "75001",
+ *     "ville": "Paris",
+ *     "dateEmbauche": "2020-06-15"
+ *   },
+ *   "message": "Profil récupéré avec succès"
+ * }
+ *
+ * Response 401:
+ * {
+ *   "success": false,
+ *   "message": "Token manquant" | "Token invalide" | "Token expiré"
+ * }
+ */
+authRouter.get('/me', requireAuth, handleGetCurrentVisiteur);
 
 export default authRouter;

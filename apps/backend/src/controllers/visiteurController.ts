@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import type { ApiResponse, VisiteurPublic } from '@gsb/types';
 import { makeSuccess } from '../utils/apiResponseUtils.js';
-import { postVisiteur, loginVisiteur } from '../services/visiteurService.js';
+import {
+    postVisiteur,
+    loginVisiteur,
+    getCurrentVisiteur,
+} from '../services/visiteurService.js';
 import { isProd } from '../constants.js';
 
 /**
@@ -102,4 +106,33 @@ export const handleLogoutVisiteur = (
     });
 
     return res.status(200).json(makeSuccess(undefined, 'Déconnexion réussie'));
+};
+
+/**
+ * Contrôleur HTTP pour récupérer le profil de l'utilisateur authentifié.
+ * Utilisé pour vérifier l'état de la session (ex: au chargement de l'application).
+ *
+ * @param {Request} req - Requête Express avec authUser injecté par requireAuth
+ * @param {Response} res - Réponse Express typée ApiResponse<VisiteurPublic>
+ * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
+ * @returns {Promise<Response<ApiResponse<VisiteurPublic>> | undefined>}
+ * @throws {DatabaseError} En cas d'erreur base de données
+ *
+ * @example
+ * // GET /auth/me
+ * // Requiert un token JWT valide dans les cookies
+ * // Réponse 200 JSON avec profil public:
+ * // { success: true, data: { id, nom, prenom, ... }, message: "Connexion réussie" }
+ */
+export const handleGetCurrentVisiteur = async (
+    req: Request,
+    res: Response<ApiResponse<VisiteurPublic>>,
+    next: NextFunction
+): Promise<Response<ApiResponse<VisiteurPublic>> | undefined> => {
+    try {
+        const visiteur = await getCurrentVisiteur(req.authUser!.id);
+        return res.status(200).json(makeSuccess(visiteur, 'Connexion réussie'));
+    } catch (error) {
+        next(error);
+    }
 };
