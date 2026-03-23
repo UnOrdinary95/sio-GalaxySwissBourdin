@@ -35,13 +35,16 @@ const handleLogout = async () => {
         }
 
         authStore.setAuth(null);
-        toast.success('Déconnexion réussie');
+        toast.success('Déconnexion réussie', {
+            position: 'bottom-right',
+        });
         await router.push('/login');
     } catch (error) {
         const message =
             error instanceof Error ? error.message : 'Erreur de déconnexion';
         toast.error('Erreur', {
             description: message,
+            position: 'bottom-right',
         });
     }
 };

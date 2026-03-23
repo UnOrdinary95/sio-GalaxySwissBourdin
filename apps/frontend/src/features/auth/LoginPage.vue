@@ -50,6 +50,7 @@ const onSubmit = handleSubmit(async (data: LoginInput) => {
         authStore.setAuth(response.data);
         toast.success('Connexion réussie', {
             description: `Bienvenue ${response.data.prenom} !`,
+            position: 'bottom-right',
         });
 
         await router.push('/');
@@ -58,6 +59,7 @@ const onSubmit = handleSubmit(async (data: LoginInput) => {
             error instanceof Error ? error.message : 'Erreur de connexion';
         toast.error('Erreur', {
             description: message,
+            position: 'bottom-right',
         });
     }
 });

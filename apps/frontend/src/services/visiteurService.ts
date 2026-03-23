@@ -35,3 +35,14 @@ export const logoutVisiteur = async (): Promise<ApiResponse<null>> => {
     const response = await api.post<ApiResponse<null>>('/auth/logout');
     return response.data;
 };
+
+/**
+ * Récupère le profil de l'utilisateur authentifié.
+ * Utilisé pour vérifier l'état de la session au chargement de l'application.
+ */
+export const getCurrentVisiteur = async (): Promise<
+    ApiResponse<VisiteurPublic>
+> => {
+    const response = await api.get<ApiResponse<VisiteurPublic>>('/auth/me');
+    return response.data;
+};
