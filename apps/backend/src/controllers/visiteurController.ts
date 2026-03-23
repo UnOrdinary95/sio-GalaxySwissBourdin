@@ -71,7 +71,7 @@ export const handleConnectVisiteur = async (
         res.cookie('token', token, {
             httpOnly: true,
             secure: isProd,
-            sameSite: isProd ? 'lax' : 'none', // 'lax' en prod (protection CSRF), 'none' en dev (autorise les requêtes cross-origin localhost)
+            sameSite: 'lax',
             maxAge: 24 * 60 * 60 * 1000, // 1 jour en millisecondes
         });
 
@@ -102,7 +102,7 @@ export const handleLogoutVisiteur = (
     res.clearCookie('token', {
         httpOnly: true,
         secure: isProd,
-        sameSite: isProd ? 'lax' : 'none',
+        sameSite: 'lax',
     });
 
     return res.status(200).json(makeSuccess(undefined, 'Déconnexion réussie'));
