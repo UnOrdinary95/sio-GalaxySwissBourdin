@@ -15,3 +15,19 @@ export const getMedecinsPaginated = async (
     );
     return response.data;
 };
+
+/**
+ * Recherche paginée de médecins par nom/prénom.
+ */
+export const searchMedecins = async (
+    query: string,
+    offset: number
+): Promise<ApiResponse<PaginatedResponse<Medecin>>> => {
+    const response = await api.get<ApiResponse<PaginatedResponse<Medecin>>>(
+        `/medecins/search`,
+        {
+            params: { q: query, offset },
+        }
+    );
+    return response.data;
+};

@@ -15,9 +15,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuthStore } from '@/stores/authStore.js';
 import { logoutVisiteur } from '@/services/visiteurService.js';
+import { searchMedecins } from '@/services/medecinService.ts';
 
 /** État de la requête de recherche */
 const searchQuery = ref('');
+
+/** État de chargement de la recherche */
+const isSearching = ref(false);
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -41,13 +45,42 @@ const handleLogout = async () => {
         });
     }
 };
+
+// Gère la recherche : validation, appel API et redirection
+const handleSearch = async () => {
+    const trimmedQuery = searchQuery.value.trim();
+
+    if (!trimmedQuery) {
+        toast.error('Veuillez entrer un terme de recherche');
+        return;
+    }
+
+    try {
+        isSearching.value = true;
+        await searchMedecins(trimmedQuery, 0);
+        // Redirection vers la page médecins avec le paramètre de recherche
+        await router.push({
+            path: '/',
+            query: { search: trimmedQuery },
+        });
+    } catch (error) {
+        const message =
+            error instanceof Error ? error.message : 'Erreur de recherche';
+        toast.error('Erreur', {
+            description: message,
+            position: 'bottom-right',
+        });
+    } finally {
+        isSearching.value = false;
+    }
+};
 </script>
 
 <template>
     <header class="bg-background">
         <div class="flex items-center justify-between gap-8 px-6 py-4">
             <!-- Logo à gauche -->
-            <div class="shrink-0">
+            <div class="shrink-0 cursor-pointer" @click="router.push('/')">
                 <img
                     alt="GSB logo"
                     class="h-14 w-auto"
@@ -55,7 +88,7 @@ const handleLogout = async () => {
                 />
             </div>
 
-            <!-- Barre de recherche au centre -->
+            <!-- Barre de recherche -->
             <div class="flex flex-1 items-center">
                 <div class="relative flex w-full max-w-lg items-center">
                     <Search
@@ -66,11 +99,14 @@ const handleLogout = async () => {
                         class="pl-10 pr-24 [&]:py-2"
                         placeholder="Rechercher un médecin..."
                         type="text"
+                        @keyup.enter="handleSearch"
                     />
                     <Button
                         type="button"
                         variant="default"
                         class="absolute right-1 px-2 py-1 h-auto text-sm"
+                        :disabled="isSearching"
+                        @click="handleSearch"
                     >
                         Rechercher
                     </Button>
