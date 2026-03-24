@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import type { ApiResponse, PaginatedResponse, Medecin } from '@gsb/types';
 import { makeSuccess } from '../utils/apiResponseUtils.js';
-import { getMedecinsPaginated } from '../services/medecinService.js';
+import {
+    getMedecinsPaginated,
+    getMedecinsPaginatedWithQuery,
+} from '../services/medecinService.js';
 
 /**
  * Contrôleur HTTP pour récupérer une liste paginée de médecins.
@@ -33,6 +36,51 @@ export const handleGetMedecinsPaginated = async (
         const offset = offsetParam ? Math.max(0, parseInt(offsetParam, 10)) : 0;
 
         const medecins = await getMedecinsPaginated(offset);
+
+        return res
+            .status(200)
+            .json(makeSuccess(medecins, 'Liste des médecins récupérée'));
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Contrôleur HTTP pour récupérer une liste paginée de médecins filtrée par recherche.
+ * Orchestre la requête HTTP → service métier → réponse JSON.
+ *
+ * Query params:
+ * - `offset` (optionnel, par défaut 0): nombre de médecins à ignorer
+ * - `q` (requeried): terme de recherche pour le filtrage ILIKE
+ *
+ * @param {Request} req - Requête Express avec query params
+ * @param {Response} res - Réponse Express typée ApiResponse<PaginatedResponse<Medecin>>
+ * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
+ * @returns {Promise<Response<ApiResponse<PaginatedResponse<Medecin>>> | undefined>}
+ * @throws {DatabaseError} Erreurs base de données propagées au middleware d'erreurs global
+ */
+export const handleGetMedecinsPaginatedWithQuery = async (
+    req: Request,
+    res: Response<ApiResponse<PaginatedResponse<Medecin>>>,
+    next: NextFunction
+): Promise<Response<ApiResponse<PaginatedResponse<Medecin>>> | undefined> => {
+    try {
+        const offsetParam = req.query.offset as string | undefined;
+        const offset = offsetParam ? Math.max(0, parseInt(offsetParam, 10)) : 0;
+
+        const query = req.query.q as string | undefined;
+
+        if (!query || query.trim().length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Le paramètre de recherche "q" est requis',
+            });
+        }
+
+        const medecins = await getMedecinsPaginatedWithQuery(
+            offset,
+            query.trim()
+        );
 
         return res
             .status(200)

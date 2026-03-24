@@ -3,7 +3,10 @@ import {
     type PaginatedResponse,
     type Medecin,
 } from '@gsb/types';
-import { findManyMedecinPaginated } from '../repositories/medecinRepository.js';
+import {
+    findManyMedecinPaginated,
+    findManyMedecinPaginatedWithQuery,
+} from '../repositories/medecinRepository.js';
 
 /**
  * Récupère une page paginée de médecins.
@@ -17,6 +20,33 @@ export const getMedecinsPaginated = async (
     offset: number
 ): Promise<PaginatedResponse<Medecin>> => {
     const result = await findManyMedecinPaginated(MEDECINS_PAGE_SIZE, offset);
+
+    return {
+        items: result.items,
+        total: result.total,
+        limit: MEDECINS_PAGE_SIZE,
+        offset,
+    };
+};
+
+/**
+ * Récupère une page paginée de médecins filtrée par terme de recherche.
+ * Utilise la taille de page définie par MEDECINS_PAGE_SIZE.
+ *
+ * @param {number} offset - Offset pour la pagination (nombre de médecins à ignorer)
+ * @param {string} query - Terme de recherche pour le filtrage
+ * @returns {Promise<PaginatedResponse<Medecin>>}
+ * @throws {DatabaseError} Si la requête échoue
+ */
+export const getMedecinsPaginatedWithQuery = async (
+    offset: number,
+    query: string
+): Promise<PaginatedResponse<Medecin>> => {
+    const result = await findManyMedecinPaginatedWithQuery(
+        MEDECINS_PAGE_SIZE,
+        offset,
+        query
+    );
 
     return {
         items: result.items,

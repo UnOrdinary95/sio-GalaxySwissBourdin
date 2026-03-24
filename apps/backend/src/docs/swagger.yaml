@@ -247,6 +247,57 @@ paths:
                                 internal:
                                     $ref: '#/components/examples/ErrDatabaseMedecins'
 
+    /medecins/search:
+        get:
+            tags:
+                - Medecins
+            summary: Rechercher des médecins par nom/prénom
+            description: Retourne une page de médecins filtrée par recherche textuelle avec ILIKE (insensible à la casse). **Middlewares:** Aucun
+            parameters:
+                - in: query
+                  name: q
+                  schema:
+                      type: string
+                      minLength: 1
+                  description: Terme de recherche pour filtrer les médecins (recherche dans nom et prénom)
+                  required: true
+                - in: query
+                  name: offset
+                  schema:
+                      type: integer
+                      minimum: 0
+                      default: 0
+                  description: Nombre de médecins à ignorer (offset pour la pagination)
+                  required: false
+            responses:
+                '200':
+                    description: Liste paginée de médecins filtrée récupérée avec succès
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiSuccessMedecins'
+                            examples:
+                                success:
+                                    $ref: '#/components/examples/ExampleGetMedecinsSuccess'
+                '400':
+                    description: Paramètre de recherche manquant ou invalide
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                missingQuery:
+                                    $ref: '#/components/examples/ErrMissingSearchQuery'
+                '500':
+                    description: Erreur serveur interne
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                internal:
+                                    $ref: '#/components/examples/ErrDatabaseMedecins'
+
 components:
     schemas:
         RegisterInput:
@@ -710,3 +761,9 @@ components:
             value:
                 success: false
                 message: Erreur base de données
+
+        ErrMissingSearchQuery:
+            summary: Paramètre de recherche manquant
+            value:
+                success: false
+                error: 'Le paramètre de recherche "q" est requis'
