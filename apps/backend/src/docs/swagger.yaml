@@ -12,6 +12,8 @@ tags:
       description: Authentification et création de compte
     - name: Medecins
       description: Gestion des médecins et praticiens
+    - name: Rapports
+      description: Gestion des rapports de visite
 
 paths:
     /auth/register:
@@ -297,6 +299,183 @@ paths:
                             examples:
                                 internal:
                                     $ref: '#/components/examples/ErrDatabaseMedecins'
+
+    /rapports:
+        get:
+            tags:
+                - Rapports
+            summary: Liste les rapports de visite
+            description: Récupère tous les rapports filtrés par visiteur ou par médecin. **Middlewares:** requireAuth
+            parameters:
+                - in: query
+                  name: type
+                  schema:
+                      type: string
+                      enum: [visiteur, medecin]
+                  description: Type de filtrage (visiteur ou medecin)
+                  required: true
+                - in: query
+                  name: id
+                  schema:
+                      type: string
+                  description: Identifiant du visiteur (char(4)) ou du médecin (integer)
+                  required: true
+            responses:
+                '200':
+                    description: Liste des rapports récupérée avec succès
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiSuccessRapports'
+                            examples:
+                                success:
+                                    $ref: '#/components/examples/ExampleGetRapportsSuccess'
+                '400':
+                    description: Paramètres de requête invalides
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                invalidParams:
+                                    $ref: '#/components/examples/ErrRapportsInvalidParams'
+                '401':
+                    description: Non authentifié (token manquant, invalide ou expiré)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                missingToken:
+                                    $ref: '#/components/examples/ErrAuthTokenMissing'
+                                invalidToken:
+                                    $ref: '#/components/examples/ErrAuthTokenInvalid'
+                                expiredToken:
+                                    $ref: '#/components/examples/ErrAuthTokenExpired'
+                '500':
+                    description: Erreur serveur interne
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                internal:
+                                    $ref: '#/components/examples/ErrDatabaseInternal'
+
+    /rapports/{id}:
+        put:
+            tags:
+                - Rapports
+            summary: Modifie un rapport de visite
+            description: Met à jour le motif et le bilan d'un rapport. Seul le visiteur propriétaire peut modifier son rapport. **Middlewares:** requireAuth
+            parameters:
+                - in: path
+                  name: id
+                  schema:
+                      type: integer
+                  description: Identifiant du rapport
+                  required: true
+            requestBody:
+                required: false
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RapportUpdateInput'
+            responses:
+                '200':
+                    description: Rapport mis à jour avec succès
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiSuccessRapport'
+                            examples:
+                                success:
+                                    $ref: '#/components/examples/ExampleUpdateRapportSuccess'
+                '401':
+                    description: Non authentifié (token manquant, invalide ou expiré)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                missingToken:
+                                    $ref: '#/components/examples/ErrAuthTokenMissing'
+                                invalidToken:
+                                    $ref: '#/components/examples/ErrAuthTokenInvalid'
+                                expiredToken:
+                                    $ref: '#/components/examples/ErrAuthTokenExpired'
+                '404':
+                    description: Rapport non trouvé ou non autorisé
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                notFound:
+                                    $ref: '#/components/examples/ErrRapportNotFound'
+                '500':
+                    description: Erreur serveur interne
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                internal:
+                                    $ref: '#/components/examples/ErrDatabaseInternal'
+
+        delete:
+            tags:
+                - Rapports
+            summary: Supprime un rapport de visite
+            description: Supprime un rapport existant. Seul le visiteur propriétaire peut supprimer son rapport. **Middlewares:** requireAuth
+            parameters:
+                - in: path
+                  name: id
+                  schema:
+                      type: integer
+                  description: Identifiant du rapport
+                  required: true
+            responses:
+                '200':
+                    description: Rapport supprimé avec succès
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiSuccessMessage'
+                            examples:
+                                success:
+                                    $ref: '#/components/examples/ExampleDeleteRapportSuccess'
+                '401':
+                    description: Non authentifié (token manquant, invalide ou expiré)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                missingToken:
+                                    $ref: '#/components/examples/ErrAuthTokenMissing'
+                                invalidToken:
+                                    $ref: '#/components/examples/ErrAuthTokenInvalid'
+                                expiredToken:
+                                    $ref: '#/components/examples/ErrAuthTokenExpired'
+                '404':
+                    description: Rapport non trouvé ou non autorisé
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                notFound:
+                                    $ref: '#/components/examples/ErrRapportNotFound'
+                '500':
+                    description: Erreur serveur interne
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                internal:
+                                    $ref: '#/components/examples/ErrDatabaseInternal'
 
 components:
     schemas:
@@ -616,6 +795,89 @@ components:
                         offset:
                             type: integer
                             description: Offset utilisé pour la requête
+                message:
+                    type: string
+                    description: Message de confirmation
+
+        Rapport:
+            type: object
+            required:
+                - id
+                - idVisiteur
+                - idMedecin
+            properties:
+                id:
+                    type: integer
+                    description: Identifiant unique du rapport
+                date:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: Date de la visite
+                motif:
+                    type: string
+                    maxLength: 100
+                    nullable: true
+                    description: Motif de la visite
+                bilan:
+                    type: string
+                    maxLength: 100
+                    nullable: true
+                    description: Bilan de la visite
+                idVisiteur:
+                    type: string
+                    maxLength: 4
+                    description: Identifiant du visiteur
+                idMedecin:
+                    type: integer
+                    description: Identifiant du médecin visité
+
+        RapportUpdateInput:
+            type: object
+            properties:
+                motif:
+                    type: string
+                    maxLength: 100
+                    nullable: true
+                    description: Nouveau motif de la visite
+                bilan:
+                    type: string
+                    maxLength: 100
+                    nullable: true
+                    description: Nouveau bilan de la visite
+
+        ApiSuccessRapports:
+            type: object
+            required:
+                - success
+                - data
+                - message
+            properties:
+                success:
+                    type: boolean
+                    enum: [true]
+                data:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/Rapport"
+                    description: Liste des rapports
+                message:
+                    type: string
+                    description: Message de confirmation
+
+        ApiSuccessRapport:
+            type: object
+            required:
+                - success
+                - data
+                - message
+            properties:
+                success:
+                    type: boolean
+                    enum: [true]
+                data:
+                    $ref: "#/components/schemas/Rapport"
+                    description: Rapport mis à jour
                 message:
                     type: string
                     description: Message de confirmation

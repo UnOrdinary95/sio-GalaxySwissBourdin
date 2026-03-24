@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import errorHandler from './middlewares/errorHandler.js';
 import authRouter from './routes/authRouter.js';
 import medecinRouter from './routes/medecinRouter.js';
+import rapportRouter from './routes/rapportRouter.js';
 
 /**
  * Instance Express configurée avec tous les middlewares globaux.
@@ -67,6 +68,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/auth', authRouter);
 app.use('/medecins', medecinRouter);
+app.use('/rapports', rapportRouter);
 
 app.use(errorHandler);
 
