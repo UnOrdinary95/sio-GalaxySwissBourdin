@@ -7,17 +7,6 @@ import { getCurrentVisiteur } from '@/services/visiteurService.js';
  * Store Pinia pour la gestion de l'état d'authentification.
  * Centralise les données du visiteur connecté et expose les méthodes
  * pour mettre à jour l'état d'authentification.
- *
- * @example
- * const authStore = useAuthStore();
- * // Vérifier si l'utilisateur est connecté
- * if (authStore.isLoggedIn) {
- *   console.log('Connecté :', authStore.visiteurPublic?.prenom);
- * }
- * // Mettre à jour après une connexion
- * authStore.setAuth(visiteurPublicFromAPI);
- * // Afficher les initiales dans un avatar
- * const initiales = authStore.getInitiales();
  */
 export const useAuthStore = defineStore('auth', () => {
     /**
@@ -38,12 +27,6 @@ export const useAuthStore = defineStore('auth', () => {
      * À appeler après une connexion réussie ou pour déconnecter (passer null).
      *
      * @param {VisiteurPublic | null} visiteur - Profil public du visiteur, ou null pour déconnecter
-     *
-     * @example
-     * // Après login
-     * authStore.setAuth(visiteurFromAPI);
-     * // Après logout
-     * authStore.setAuth(null);
      */
     const setAuth = (visiteur: VisiteurPublic | null) => {
         visiteurPublic.value = visiteur;
@@ -55,11 +38,6 @@ export const useAuthStore = defineStore('auth', () => {
      * Retourne '?' si le prenom ou nom est manquant.
      *
      * @returns {string} Deux lettres majuscules (ex: 'JD' pour Jean Dupont), ou '?'
-     *
-     * @example
-     * const initiales = authStore.getInitiales(); // 'JD'
-     * // Utiliser dans un Avatar :
-     * // <AvatarFallback>{{ initiales }}</AvatarFallback>
      */
     const getInitiales = (): string => {
         if (!visiteurPublic.value?.prenom || !visiteurPublic.value?.nom) {

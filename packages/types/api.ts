@@ -24,9 +24,5 @@ export type ApiError = {
  * Type générique englobant tous les scénarios de réponse HTTP.
  *
  * @template T - Type des données en cas de succès
- *
- * @example
- * type GetVisiteurResponse = ApiResponse<Visiteur>;
- * // Peut être ApiSuccess<Visiteur> | ApiError
  */
 export type ApiResponse<T> = ApiSuccess<T> | ApiError;

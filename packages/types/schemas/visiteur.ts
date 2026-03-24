@@ -8,13 +8,6 @@ import { z } from 'zod';
  *
  * Utilisé côté backend pour valider les requêtes d'inscription
  * et côté frontend pour la validation client.
- *
- * @example
- * const data = { nom: 'Dupont', prenom: 'Jean', ... };
- * const result = registerInputSchema.safeParse(data);
- * if (result.success) {
- *   const validatedInput = result.data; // RegisterInput
- * }
  */
 export const registerInputSchema = z.object({
     nom: z
@@ -59,13 +52,6 @@ export type RegisterInput = z.infer<typeof registerInputSchema>;
  * - mdp: maximum 20 caractères (aligné sur la table visiteur)
  *
  * Utilisé pour authentifier un visiteur avant génération de token JWT.
- *
- * @example
- * const data = { login: 'jdupont', mdp: 'secret' };
- * const result = loginInputSchema.safeParse(data);
- * if (result.success) {
- *   const validatedInput = result.data; // LoginInput
- * }
  */
 export const loginInputSchema = z.object({
     login: z

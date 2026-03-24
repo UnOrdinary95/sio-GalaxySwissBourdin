@@ -27,21 +27,6 @@ type JwtError = {
  * @param {Response} res - Réponse Express (non utilisée)
  * @param {NextFunction} next - Callback pour passer au middleware suivant
  * @throws {UnauthorizedError} Propage une erreur 401 au errorHandler global
- *
- * @example
- * // Protéger une route spécifique
- * router.get('/medecins', requireAuth, handleGetMedecins);
- *
- * // Protéger un groupe de routes
- * router.use(requireAuth);
- * router.get('/rapport', handleGetRapport);
- *
- * @example
- * // Accès aux identifiants de l'utilisateur dans une route protégée
- * router.get('/profile', requireAuth, (req, res) => {
- *   const { id, login } = req.authUser!; // req.authUser est garanti non-undefined
- *   res.json({ message: `Bienvenue, ${login}` });
- * });
  */
 export const requireAuth = (
     req: Request,

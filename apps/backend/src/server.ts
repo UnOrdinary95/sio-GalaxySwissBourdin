@@ -14,10 +14,6 @@ import { connectDb } from './config/db.js';
  *
  * @returns {Promise<void>}
  * @throws Aucune exception levée; les erreurs provoquent un exit(1)
- *
- * @example
- * // Script appelé directement au démarrage de l'app
- * // pnpm --filter @gsb/backend dev
  */
 const startServer = async () => {
     try {

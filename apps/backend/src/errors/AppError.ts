@@ -74,14 +74,6 @@ export type DatabaseErrorPayload = {
  *
  * @param {DatabaseErrorPayload} error - Objet d'erreur brut venant de PostgreSQL
  * @returns {AppError} Erreur spécialisée (ConflictError, NotFoundError, ou DatabaseError)
- *
- * @example
- * try {
- *   // INSERT qui viole une contrainte unique
- * } catch (err) {
- *   const appErr = mapDatabaseError(err as DatabaseErrorPayload);
- *   throw appErr;
- * }
  */
 export const mapDatabaseError = (error: DatabaseErrorPayload): AppError => {
     switch (error.code) {

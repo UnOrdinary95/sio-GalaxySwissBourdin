@@ -19,18 +19,6 @@ import { generateId } from '../utils/visiteurUtils.js';
  * @returns {Promise<void>} Insertion effectuée (aucune donnée retournée)
  * @throws {ConflictError} Si le login existe déjà (contrainte unique violée)
  * @throws {DatabaseError} Autres erreurs PostgreSQL
- *
- * @example
- * await insertVisiteur({
- *   login: 'jdupont',
- *   mdp: 'secret',
- *   nom: 'Dupont',
- *   prenom: 'Jean',
- *   adresse: '123 rue',
- *   cp: '75001',
- *   ville: 'Paris'
- * });
- * // Insertion réussie, pas de retour de données
  */
 export const insertVisiteur = async (input: RegisterInput): Promise<void> => {
     try {
@@ -68,21 +56,6 @@ export const insertVisiteur = async (input: RegisterInput): Promise<void> => {
  * @returns {Promise<VisiteurPublic>} Profil public du visiteur authentifié
  * @throws {UnauthorizedError} Si les identifiants sont invalides (login/mdp incorrect)
  * @throws {DatabaseError} En cas d'erreur base de données
- *
- * @example
- * try {
- *   const profil = await authenticateVisiteur({
- *     login: 'jdupont',
- *     mdp: 'password123'
- *   });
- *   console.log(profil.nom); // 'Dupont'
- *   // Inclut: id, nom, prenom, login, adresse, cp, ville, dateEmbauche
- *   // Exclut: mdp, ticket, timespan
- * } catch (err) {
- *   if (err instanceof UnauthorizedError) {
- *     // Identifiants invalides
- *   }
- * }
  */
 export const authenticateVisiteur = async (
     input: LoginInput
@@ -118,16 +91,6 @@ export const authenticateVisiteur = async (
  * @returns {Promise<VisiteurPublic>} Profil public du visiteur
  * @throws {NotFoundError} Si le visiteur n'est pas trouvé
  * @throws {DatabaseError} En cas d'erreur base de données
- *
- * @example
- * try {
- *   const profil = await findUniqueVisiteur('x9Kp');
- *   console.log(profil.nom); // 'Dupont'
- * } catch (err) {
- *   if (err instanceof NotFoundError) {
- *     // Visiteur introuvable
- *   }
- * }
  */
 export const findUniqueVisiteur = async (
     id: string

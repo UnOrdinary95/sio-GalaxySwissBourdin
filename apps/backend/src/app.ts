@@ -30,10 +30,6 @@ import medecinRouter from './routes/medecinRouter.js';
  * - Middleware global errorHandler pour normaliser les réponses d'erreur
  *
  * @type {Express.Application}
- *
- * @example
- * import app from './app.js';
- * app.listen(3100);
  */
 const app = express();
 

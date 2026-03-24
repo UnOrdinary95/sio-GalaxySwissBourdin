@@ -72,10 +72,6 @@ const serializeUnknownError = (error: unknown): string => {
  * @type {Object}
  * @property {(context: string, error: unknown) => void} error - Log une erreur avec contexte
  * @property {(message: string) => void} info - Log un message informatif
- *
- * @example
- * logger.info('Base de données connectée');
- * logger.error('Erreur API', new Error('Connection refused'));
  */
 export const logger = {
     /**

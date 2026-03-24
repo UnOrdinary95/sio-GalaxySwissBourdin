@@ -4,9 +4,6 @@
  * Utilisé comme clé primaire visiteur en base de données.
  *
  * @returns {string} ID aléatoire de 4 caractères (ex: 'A1bC')
- *
- * @example
- * const id = generateId(); // Pourrait donner 'x9Kp'
  */
 export const generateId = (): string => {
     const chars =

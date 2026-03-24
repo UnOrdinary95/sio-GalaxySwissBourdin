@@ -18,12 +18,6 @@ import { isProd } from '../constants.js';
  * @returns {Promise<Response<ApiResponse<null>> | undefined>}
  * @throws {ConflictError} Si le login existe déjà
  * @throws {AppError} Autres erreurs métier propagées au middleware d'erreurs global
- *
- * @example
- * // POST /auth/register
- * // req.body validé: { login, mdp, nom, prenom, adresse, cp, ville }
- * // Réponse 201 JSON (sans données):
- * // { success: true, message: "Visiteur créé avec succès" }
  */
 export const handlePostVisiteur = async (
     req: Request,
@@ -51,13 +45,6 @@ export const handlePostVisiteur = async (
  * @returns {Promise<Response<ApiResponse<VisiteurPublic>> | undefined>}
  * @throws {UnauthorizedError} Si les identifiants sont invalides (login/mdp incorrect)
  * @throws {DatabaseError} Autres erreurs base de données propagées au middleware d'erreurs global
- *
- * @example
- * // POST /auth/login
- * // req.body validé: { login, mdp }
- * // Réponse 200 JSON (avec données profil, token dans cookie):
- * // { success: true, data: { id, nom, prenom, ... }, message: "Connexion réussie" }
- * // Set-Cookie: token=<jwt>; HttpOnly; Secure; SameSite=Lax; Max-Age=86400000
  */
 export const handleConnectVisiteur = async (
     req: Request,
@@ -88,12 +75,6 @@ export const handleConnectVisiteur = async (
  * @param {Request} req - Requête Express
  * @param {Response} res - Réponse Express typée ApiResponse<null>
  * @returns {Response<ApiResponse<null>>}
- *
- * @example
- * // POST /auth/logout
- * // Réponse 200 JSON (données vides, cookie supprimé):
- * // { success: true, message: "Déconnexion réussie" }
- * // Set-Cookie: token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0
  */
 export const handleLogoutVisiteur = (
     req: Request,
@@ -117,12 +98,6 @@ export const handleLogoutVisiteur = (
  * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
  * @returns {Promise<Response<ApiResponse<VisiteurPublic>> | undefined>}
  * @throws {DatabaseError} En cas d'erreur base de données
- *
- * @example
- * // GET /auth/me
- * // Requiert un token JWT valide dans les cookies
- * // Réponse 200 JSON avec profil public:
- * // { success: true, data: { id, nom, prenom, ... }, message: "Connexion réussie" }
  */
 export const handleGetCurrentVisiteur = async (
     req: Request,

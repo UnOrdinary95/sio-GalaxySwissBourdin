@@ -15,20 +15,6 @@ import { getMedecinsPaginated } from '../services/medecinService.js';
  * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
  * @returns {Promise<Response<ApiResponse<PaginatedResponse<Medecin>>> | undefined>}
  * @throws {DatabaseError} Erreurs base de données propagées au middleware d'erreurs global
- *
- * @example
- * // GET /medecins?offset=0
- * // Réponse 200:
- * // {
- * //   success: true,
- * //   data: {
- * //     items: [{ id, nom, prenom, adresse, ... }, ...],
- * //     total: 1000,
- * //     limit: 30,
- * //     offset: 0
- * //   },
- * //   message: "Liste des médecins récupérée"
- * // }
  */
 export const handleGetMedecinsPaginated = async (
     req: Request,

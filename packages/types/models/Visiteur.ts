@@ -35,10 +35,6 @@ export type Visiteur = {
 /**
  * Identifiants minimaux d'un visiteur authentifié.
  * Utilisé pour générer les tokens JWT et maintenir les sessions.
- *
- * @example
- * type AuthPayload = AuthenticatedVisiteur;
- * const payload: AuthPayload = { id: 'x9Kp', login: 'jdupont' };
  */
 export type AuthenticatedVisiteur = {
     /** Identifiant unique du visiteur */
@@ -52,18 +48,6 @@ export type AuthenticatedVisiteur = {
  * Exclut les champs sensibles : mdp, ticket, timespan.
  * Utilisé dans la réponse d'authentification pour donner au client
  * les informations de profil nécessaires sans compromettre la sécurité.
- *
- * @example
- * const profile: VisiteurPublic = {
- *   id: 'x9Kp',
- *   nom: 'Dupont',
- *   prenom: 'Jean',
- *   login: 'jdupont',
- *   adresse: '123 Rue de Paris',
- *   cp: '75001',
- *   ville: 'Paris',
- *   dateEmbauche: '2020-06-15'
- * };
  */
 export type VisiteurPublic = {
     /** Identifiant unique de 4 caractères alphanumériques */

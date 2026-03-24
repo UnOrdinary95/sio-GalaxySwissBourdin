@@ -11,14 +11,6 @@ import { logger } from '../utils/loggerUtils.js';
  *
  * @param {ZodType} schema - Schéma Zod de validation
  * @returns {(req: Request, res: Response, next: NextFunction) => void} Middleware Express
- *
- * @example
- * import { Router } from 'express';
- * import { validateBody } from './middlewares/validationHandler.js';
- * import { registerInputSchema } from '@gsb/types/schemas';
- *
- * const router = Router();
- * router.post('/register', validateBody(registerInputSchema), handleRegister);
  */
 export const validateBody = (schema: ZodType) => {
     return (req: Request, res: Response, next: NextFunction) => {

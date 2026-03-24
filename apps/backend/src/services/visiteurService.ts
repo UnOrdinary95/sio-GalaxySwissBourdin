@@ -25,15 +25,6 @@ export type AuthTokenPayload = AuthenticatedVisiteur;
  * @returns {Promise<void>} Insertion effectuée
  * @throws {ConflictError} Si le login existe déjà
  * @throws {DatabaseError} En cas d'erreur persistance
- *
- * @example
- * await postVisiteur({
- *   login: 'jdupont',
- *   mdp: 'secret',
- *   nom: 'Dupont',
- *   // ...
- * });
- * // Compte créé avec succès, pas de données retournées
  */
 export const postVisiteur = async (input: RegisterInput): Promise<void> => {
     await insertVisiteur(input);
@@ -48,20 +39,6 @@ export const postVisiteur = async (input: RegisterInput): Promise<void> => {
  * @throws {UnauthorizedError} Si les identifiants sont invalides (login/mdp incorrect)
  * @throws {Error} Si JWT_SECRET n'est pas configurée en variables d'environnement
  * @throws {DatabaseError} En cas d'erreur base de données
- *
- * @example
- * try {
- *   const result = await loginVisiteur({
- *     login: 'jdupont',
- *     mdp: 'password123'
- *   });
- *   console.log(result.token); // JWT valide 1 jour
- *   console.log(result.visiteur.nom); // Dupont
- * } catch (err) {
- *   if (err instanceof UnauthorizedError) {
- *     // Identifiants invalides
- *   }
- * }
  */
 export const loginVisiteur = async (
     input: LoginInput
@@ -96,16 +73,6 @@ export const loginVisiteur = async (
  * @returns {Promise<VisiteurPublic>} Profil public du visiteur authentifié
  * @throws {NotFoundError} Si le visiteur n'est pas trouvé
  * @throws {DatabaseError} En cas d'erreur base de données
- *
- * @example
- * try {
- *   const profil = await getCurrentVisiteur('x9Kp');
- *   console.log(profil.nom); // 'Dupont'
- * } catch (err) {
- *   if (err instanceof NotFoundError) {
- *     // Visiteur introuvable
- *   }
- * }
  */
 export const getCurrentVisiteur = async (
     id: string

@@ -13,11 +13,6 @@ import {
  * @param {number} offset - Nombre de médecins à sauter (pagination)
  * @returns {Promise<{ items: Medecin[], total: number }>} Liste paginée + total
  * @throws {DatabaseError} En cas d'erreur lors de la requête
- *
- * @example
- * const result = await findManyMedecinPaginated(30, 0);
- * console.log(result.items.length); // <= 30
- * console.log(result.total); // Nombre total de médecins en base
  */
 export const findManyMedecinPaginated = async (
     limit: number,

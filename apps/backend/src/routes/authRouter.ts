@@ -30,26 +30,6 @@ const authRouter = Router();
  * @returns {201} Visiteur créé avec succès (sans retour de données)
  * @throws {400} Validation échouée
  * @throws {409} Visiteur existant (login en doublon)
- *
- * @example
- * POST /api/auth/register
- * Content-Type: application/json
- *
- * {
- *   "login": "jdupont",
- *   "mdp": "password123",
- *   "nom": "Dupont",
- *   "prenom": "Jean",
- *   "adresse": "123 Rue de la Paix",
- *   "cp": "75001",
- *   "ville": "Paris"
- * }
- *
- * Response 201:
- * {
- *   "success": true,
- *   "message": "Visiteur créé avec succès"
- * }
  */
 authRouter.post(
     '/register',
@@ -67,38 +47,6 @@ authRouter.post(
  * @returns {400} Validation échouée (champs manquants ou format invalide)
  * @returns {401} Identifiants invalides (login/mdp non trouvés)
  * @returns {500} Erreur interne serveur
- *
- * @example
- * POST /api/auth/login
- * Content-Type: application/json
- *
- * {
- *   "login": "jdupont",
- *   "mdp": "password123"
- * }
- *
- * Response 200:
- * {
- *   "success": true,
- *   "data": {
- *     "id": "x9Kp",
- *     "nom": "Dupont",
- *     "prenom": "Jean",
- *     "login": "jdupont",
- *     "adresse": "123 Rue de Paris",
- *     "cp": "75001",
- *     "ville": "Paris",
- *     "dateEmbauche": "2020-06-15"
- *   },
- *   "message": "Connexion réussie"
- * }
- * Set-Cookie: token=<jwt>; HttpOnly; ...
- *
- * Response 401:
- * {
- *   "success": false,
- *   "message": "Identifiants invalides"
- * }
  */
 authRouter.post(
     '/login',
@@ -113,16 +61,6 @@ authRouter.post(
  *
  * @returns {200} Déconnexion réussie
  * @returns {500} Erreur interne serveur (rare)
- *
- * @example
- * POST /api/auth/logout
- *
- * Response 200:
- * {
- *   "success": true,
- *   "message": "Déconnexion réussie"
- * }
- * Set-Cookie: token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0
  */
 authRouter.post('/logout', handleLogoutVisiteur);
 
@@ -134,32 +72,6 @@ authRouter.post('/logout', handleLogoutVisiteur);
  * @returns {200} Profil public du visiteur authentifié
  * @returns {401} Non authentifié (token manquant, invalide ou expiré)
  * @returns {500} Erreur interne serveur
- *
- * @example
- * GET /api/auth/me
- * Cookie: token=<jwt>
- *
- * Response 200:
- * {
- *   "success": true,
- *   "data": {
- *     "id": "x9Kp",
- *     "nom": "Dupont",
- *     "prenom": "Jean",
- *     "login": "jdupont",
- *     "adresse": "123 Rue de Paris",
- *     "cp": "75001",
- *     "ville": "Paris",
- *     "dateEmbauche": "2020-06-15"
- *   },
- *   "message": "Profil récupéré avec succès"
- * }
- *
- * Response 401:
- * {
- *   "success": false,
- *   "message": "Token manquant" | "Token invalide" | "Token expiré"
- * }
  */
 authRouter.get('/me', requireAuth, handleGetCurrentVisiteur);
 
