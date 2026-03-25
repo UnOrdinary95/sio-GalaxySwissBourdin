@@ -5,5 +5,19 @@
         ".opencode/rules/database-schema.md",
         ".opencode/rules/project-context.md",
         ".opencode/rules/workflows.md"
-    ]
+    ],
+    "permission": {
+        "bash": {
+            "pnpm lint*": "allow",
+            "pnpm format*": "allow",
+            "pnpm typecheck*": "allow",
+            "pnpm --filter* lint*": "allow",
+            "pnpm --filter* format*": "allow",
+            "pnpm --filter* typecheck*": "allow",
+            "pnpm --filter* type-check*": "allow"
+        }
+    },
+    "skills": {
+        "swagger-maintenance": true
+    }
 }
