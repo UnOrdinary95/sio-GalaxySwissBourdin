@@ -73,10 +73,12 @@ const errorHandler = (
     const message =
         normalizedError.message ?? 'Une erreur interne est survenue';
 
-    logger.error(
-        `Gestionnaire d'erreurs global - ${req.method} ${req.originalUrl}`,
-        err
-    );
+    if (statusCode !== 401 && statusCode !== 403) {
+        logger.error(
+            `Gestionnaire d'erreurs global - ${req.method} ${req.originalUrl}`,
+            err
+        );
+    }
 
     res.status(statusCode).json({
         success: false,
