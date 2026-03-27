@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import type { Medecin } from '@gsb/types';
 import { MapPin, Phone } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
 import { Button } from '@/components/ui/button';
 
 interface Props {
     medecin: Medecin;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const router = useRouter();
+
+const goToMedecinPage = () => {
+    router.push(`/medecin/${props.medecin.id}`);
+};
 
 /**
  * Formate un numéro de téléphone en groupes de 2 chiffres.
@@ -48,6 +54,8 @@ const formatPhoneNumber = (phone: string): string => {
             </div>
         </div>
 
-        <Button variant="outline" class="w-full">Organiser une visite</Button>
+        <Button variant="outline" class="w-full" @click="goToMedecinPage"
+            >Organiser une visite</Button
+        >
     </div>
 </template>

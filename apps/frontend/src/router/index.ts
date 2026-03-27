@@ -24,6 +24,11 @@ const router = createRouter({
             name: 'profil',
             component: () => import('../features/profil/ProfilPage.vue'),
         },
+        {
+            path: '/medecin/:id',
+            name: 'medecin',
+            component: () => import('../features/medecin/MedecinPage.vue'),
+        },
     ],
 });
 

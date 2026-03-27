@@ -132,6 +132,9 @@ importers:
       '@gsb/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@internationalized/date':
+        specifier: ^3.12.0
+        version: 3.12.0
       '@tanstack/vue-table':
         specifier: ^8.21.3
         version: 8.21.3(vue@3.5.30(typescript@5.9.3))

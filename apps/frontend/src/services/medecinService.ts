@@ -31,3 +31,11 @@ export const searchMedecins = async (
     );
     return response.data;
 };
+
+/**
+ * Récupère un médecin par son identifiant.
+ */
+export const getMedecin = async (id: number): Promise<ApiResponse<Medecin>> => {
+    const response = await api.get<ApiResponse<Medecin>>(`/medecins/${id}`);
+    return response.data;
+};
