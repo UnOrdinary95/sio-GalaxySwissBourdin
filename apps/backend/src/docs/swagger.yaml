@@ -420,7 +420,7 @@ paths:
             tags:
                 - Rapports
             summary: Liste les rapports de visite (paginé)
-            description: Récupère les rapports filtrés par visiteur connecté ou par médecin avec pagination. **Middlewares:** requireAuthForVisiteur, validateQuery(getRapportsQuerySchema). Authentification requise uniquement pour type=visiteur (l'idVisiteur est extrait du token JWT). Pour type=medecin, le paramètre id est requis et l'accès est public.
+            description: Récupère les rapports filtrés par visiteur connecté ou par médecin avec pagination. **Middlewares:** requireAuthForVisiteur, validateQuery(getRapportsQuerySchema). Authentification requise uniquement pour type=visiteur (l'idVisiteur est extrait du token JWT). Pour type=medecin, le paramètre id est requis et l'accès est public. Les rapports incluent les informations du médecin visité quand type=visiteur, ou les informations du visiteur quand type=medecin.
             parameters:
                 - in: query
                   name: type
@@ -451,8 +451,12 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ApiSuccessRapports'
                             examples:
-                                success:
-                                    $ref: '#/components/examples/ExampleGetRapportsSuccess'
+                                successByVisiteur:
+                                    summary: Résultat quand type=visiteur (infos médecin incluses)
+                                    $ref: '#/components/examples/ExampleGetRapportsByVisiteur'
+                                successByMedecin:
+                                    summary: Résultat quand type=medecin (infos visiteur incluses)
+                                    $ref: '#/components/examples/ExampleGetRapportsByMedecin'
                 '400':
                     description: Paramètres de requête invalides
                     content:
@@ -956,7 +960,7 @@ components:
                     description: Identifiant du médecin visité
                 medecin:
                     type: object
-                    description: Informations du médecin visité (présent uniquement sur GET /rapports)
+                    description: Informations du médecin visité (présent uniquement quand type=visiteur sur GET /rapports)
                     properties:
                         id:
                             type: integer
@@ -967,6 +971,22 @@ components:
                         prenom:
                             type: string
                             description: Prénom du médecin
+                visiteur:
+                    type: object
+                    description: Informations du visiteur (présent uniquement quand type=medecin sur GET /rapports)
+                    properties:
+                        id:
+                            type: string
+                            maxLength: 4
+                            description: Identifiant du visiteur
+                        nom:
+                            type: string
+                            nullable: true
+                            description: Nom du visiteur
+                        prenom:
+                            type: string
+                            nullable: true
+                            description: Prénom du visiteur
 
         RapportUpdateInput:
             type: object
@@ -1045,7 +1065,7 @@ components:
                             type: array
                             items:
                                 $ref: '#/components/schemas/Rapport'
-                            description: Liste des rapports de la page courante avec infos médecin
+                            description: Liste des rapports de la page courante avec infos médecin (si type=visiteur) ou infos visiteur (si type=medecin)
                         total:
                             type: integer
                             description: Nombre total de rapports pour ce filtre
@@ -1224,8 +1244,8 @@ components:
                 success: false
                 error: 'Le paramètre de recherche "q" est requis'
 
-        ExampleGetRapportsSuccess:
-            summary: Récupération réussie des rapports (paginé)
+        ExampleGetRapportsByVisiteur:
+            summary: Récupération réussie des rapports d'un visiteur (avec infos médecin)
             value:
                 success: true
                 data:
@@ -1251,6 +1271,37 @@ components:
                               nom: Martin
                               prenom: Jean
                     total: 45
+                    limit: 10
+                    offset: 0
+                message: Rapports récupérés avec succès
+
+        ExampleGetRapportsByMedecin:
+            summary: Récupération réussie des rapports d'un médecin (avec infos visiteur)
+            value:
+                success: true
+                data:
+                    items:
+                        - id: 1
+                          date: '2024-01-15'
+                          motif: Visite périodique
+                          bilan: Médecin intéressé par les nouveaux produits
+                          idVisiteur: aB12
+                          idMedecin: 42
+                          visiteur:
+                              id: aB12
+                              nom: Durand
+                              prenom: Pierre
+                        - id: 3
+                          date: '2024-01-25'
+                          motif: Renouvellement stock
+                          bilan: null
+                          idVisiteur: cD34
+                          idMedecin: 42
+                          visiteur:
+                              id: cD34
+                              nom: Bernard
+                              prenom: Sophie
+                    total: 12
                     limit: 10
                     offset: 0
                 message: Rapports récupérés avec succès

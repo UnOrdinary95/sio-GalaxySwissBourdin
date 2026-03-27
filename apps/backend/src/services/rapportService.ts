@@ -2,6 +2,7 @@ import {
     RAPPORTS_PAGE_SIZE,
     type Rapport,
     type RapportWithMedecin,
+    type RapportWithVisiteur,
     type PaginatedResponse,
     type PostRapportBody,
 } from '@gsb/types';
@@ -14,18 +15,19 @@ import {
 
 /**
  * Récupère les rapports paginés selon le type et l'id.
- * Retourne les rapports avec les informations du médecin associé.
+ * Retourne les rapports avec les informations du médecin associé si type=visiteur,
+ * ou avec les informations du visiteur associé si type=medecin.
  *
  * @param {('visiteur' | 'medecin')} type - Type de filtrage
  * @param {(string | number)} id - Identifiant du visiteur ou médecin
  * @param {number} offset - Nombre de rapports à ignorer pour la pagination
- * @returns {Promise<PaginatedResponse<RapportWithMedecin>>} Rapports paginés avec infos médecin
+ * @returns {Promise<PaginatedResponse<RapportWithMedecin | RapportWithVisiteur>>} Rapports paginés avec infos associées
  */
 export const getRapportsPaginated = async (
     type: 'visiteur' | 'medecin',
     id: string | number,
     offset: number
-): Promise<PaginatedResponse<RapportWithMedecin>> => {
+): Promise<PaginatedResponse<RapportWithMedecin | RapportWithVisiteur>> => {
     const result = await findManyRapportsPaginated(
         type,
         id,

@@ -3,6 +3,7 @@ import {
     RAPPORTS_PAGE_SIZE,
     type ApiResponse,
     type RapportWithMedecin,
+    type RapportWithVisiteur,
     type Rapport,
     type PaginatedResponse,
     type PostRapportBody,
@@ -17,19 +18,27 @@ import {
 
 /**
  * Gère la récupération des rapports filtrés par visiteur ou médecin avec pagination.
- * Retourne les rapports enrichis avec les informations du médecin associé.
+ * Retourne les rapports enrichis avec les informations du médecin associé si type=visiteur,
+ * ou avec les informations du visiteur associé si type=medecin.
  *
  * @param {Request} req - Requête Express avec query params type, id et offset
- * @param {Response<ApiResponse<PaginatedResponse<RapportWithMedecin>>>} res - Réponse Express
+ * @param {Response<ApiResponse<PaginatedResponse<RapportWithMedecin | RapportWithVisiteur>>>} res - Réponse Express
  * @param {NextFunction} next - Fonction suivante pour gestion d'erreurs
- * @returns {Promise<Response<ApiResponse<PaginatedResponse<RapportWithMedecin>>> | undefined>}
+ * @returns {Promise<Response<ApiResponse<PaginatedResponse<RapportWithMedecin | RapportWithVisiteur>>> | undefined>}
  */
 export const handleGetRapportsPaginated = async (
     req: Request,
-    res: Response<ApiResponse<PaginatedResponse<RapportWithMedecin>>>,
+    res: Response<
+        ApiResponse<PaginatedResponse<RapportWithMedecin | RapportWithVisiteur>>
+    >,
     next: NextFunction
 ): Promise<
-    Response<ApiResponse<PaginatedResponse<RapportWithMedecin>>> | undefined
+    | Response<
+          ApiResponse<
+              PaginatedResponse<RapportWithMedecin | RapportWithVisiteur>
+          >
+      >
+    | undefined
 > => {
     try {
         const { type, id, offset } = req.query as unknown as {

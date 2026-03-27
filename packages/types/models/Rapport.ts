@@ -34,10 +34,32 @@ export type MedecinInfo = {
 };
 
 /**
+ * Informations minimales d'un visiteur pour l'affichage dans un rapport.
+ * Utilisé dans RapportWithVisiteur pour éviter d'inclure toutes les données.
+ */
+export type VisiteurInfo = {
+    /** Identifiant unique de 4 caractères */
+    id: string;
+    /** Nom de famille du visiteur */
+    nom: string | null;
+    /** Prénom du visiteur */
+    prenom: string | null;
+};
+
+/**
  * Rapport enrichi avec les informations du médecin associé.
- * Utilisé pour l'affichage des rapports côté frontend.
+ * Utilisé pour l'affichage des rapports côté frontend quand on filtre par visiteur.
  */
 export type RapportWithMedecin = Rapport & {
     /** Informations du médecin visité */
     medecin: MedecinInfo;
+};
+
+/**
+ * Rapport enrichi avec les informations du visiteur associé.
+ * Utilisé pour l'affichage des rapports côté frontend quand on filtre par médecin.
+ */
+export type RapportWithVisiteur = Rapport & {
+    /** Informations du visiteur qui a effectué la visite */
+    visiteur: VisiteurInfo;
 };
