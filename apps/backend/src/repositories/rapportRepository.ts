@@ -1,6 +1,7 @@
 import pool from '../config/db.js';
 import type { Rapport, RapportWithMedecin, PostRapportBody } from '@gsb/types';
 import {
+    AppError,
     mapDatabaseError,
     NotFoundError,
     type DatabaseErrorPayload,
@@ -67,6 +68,9 @@ export const findManyRapportsPaginated = async (
             total: countResult.rows[0].total,
         };
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
     }
@@ -104,6 +108,9 @@ export const updateRapportByVisiteur = async (
 
         return result.rows[0] as Rapport;
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
     }
@@ -133,6 +140,9 @@ export const deleteUniqueRapportByVisiteur = async (
             throw new NotFoundError('Rapport non trouvé ou non autorisé');
         }
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
     }
@@ -169,6 +179,9 @@ export const insertRapport = async (
 
         return result.rows[0] as Rapport;
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
     }

@@ -1,6 +1,7 @@
 import pool from '../config/db.js';
 import type { Medecin } from '@gsb/types';
 import {
+    AppError,
     mapDatabaseError,
     NotFoundError,
     type DatabaseErrorPayload,
@@ -42,6 +43,9 @@ export const findManyMedecinPaginated = async (
             total: countResult.rows[0].total,
         };
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
     }
@@ -85,6 +89,9 @@ export const findManyMedecinPaginatedWithQuery = async (
             total: countResult.rows[0].total,
         };
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
     }
@@ -113,6 +120,9 @@ export const findUniqueMedecin = async (id: number): Promise<Medecin> => {
 
         return result.rows[0] as Medecin;
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
     }

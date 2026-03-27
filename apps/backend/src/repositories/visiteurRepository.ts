@@ -39,6 +39,9 @@ export const insertVisiteur = async (input: RegisterInput): Promise<void> => {
             ]
         );
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         if (appError instanceof ConflictError) {
             throw new ConflictError('Un visiteur avec ce login existe déjà');
