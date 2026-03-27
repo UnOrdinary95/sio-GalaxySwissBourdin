@@ -305,21 +305,21 @@ paths:
             tags:
                 - Rapports
             summary: Liste les rapports de visite
-            description: Récupère tous les rapports filtrés par visiteur ou par médecin. **Middlewares:** requireAuth
+            description: Récupère tous les rapports filtrés par visiteur connecté ou par médecin. **Middlewares:** requireAuth, validateQuery(getRapportsQuerySchema). Pour type=visiteur, l'idVisiteur est extrait automatiquement du token JWT (paramètre id ignoré). Pour type=medecin, le paramètre id est requis.
             parameters:
                 - in: query
                   name: type
                   schema:
                       type: string
                       enum: [visiteur, medecin]
-                  description: Type de filtrage (visiteur ou medecin)
+                  description: Type de filtrage (visiteur utilise l'id du token, medecin nécessite le paramètre id)
                   required: true
                 - in: query
                   name: id
                   schema:
                       type: string
-                  description: Identifiant du visiteur (char(4)) ou du médecin (integer)
-                  required: true
+                  description: Identifiant du médecin (integer) - requis uniquement pour type=medecin
+                  required: false
             responses:
                 '200':
                     description: Liste des rapports récupérée avec succès

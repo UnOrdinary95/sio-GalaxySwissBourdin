@@ -21,32 +21,29 @@ export const handleGetRapports = async (
     next: NextFunction
 ): Promise<Response<ApiResponse<Rapport[]>> | undefined> => {
     try {
-        const { type, id } = req.query;
+        const { type, id } = req.query as {
+            type: 'visiteur' | 'medecin';
+            id?: string;
+        };
 
-        // Array.isArray pour vérifier que ce n'est pas un tableau (ex: ?type=visiteur&type=medecin) => Express convertit en un tableau
-        if (
-            !type ||
-            !id ||
-            Array.isArray(type) ||
-            Array.isArray(id) ||
-            (type !== 'visiteur' && type !== 'medecin')
-        ) {
-            return res
-                .status(400)
-                .json(
-                    makeSuccess(
-                        [],
-                        'Paramètres invalides. Utilisez type=visiteur|medecin et id={valeur}'
-                    )
-                );
+        let idValue: string | number;
+        if (type === 'visiteur') {
+            idValue = req.authUser!.id;
+        } else {
+            if (!id) {
+                return res
+                    .status(400)
+                    .json(
+                        makeSuccess(
+                            [],
+                            "Paramètre 'id' requis pour le filtrage par médecin"
+                        )
+                    );
+            }
+            idValue = parseInt(id, 10);
         }
 
-        const typeStr = type as 'visiteur' | 'medecin';
-        const idValue = id as string;
-        const rapports = await getRapports(
-            typeStr,
-            typeStr === 'visiteur' ? idValue : parseInt(idValue, 10)
-        );
+        const rapports = await getRapports(type, idValue);
 
         return res
             .status(200)

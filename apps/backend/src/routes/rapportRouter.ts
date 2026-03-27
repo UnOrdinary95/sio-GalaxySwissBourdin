@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middlewares/requireAuth.js';
+import { validateQuery } from '../middlewares/validationHandler.js';
+import { getRapportsQuerySchema } from '@gsb/types/schemas';
 import {
     handleGetRapports,
     handlePutRapportByVisiteur,
@@ -34,7 +36,11 @@ rapportRouter.use(requireAuth);
  * @returns {401} Non authentifié
  * @returns {500} Erreur serveur
  */
-rapportRouter.get('/', handleGetRapports);
+rapportRouter.get(
+    '/',
+    validateQuery(getRapportsQuerySchema),
+    handleGetRapports
+);
 
 /**
  * PUT /:id
