@@ -26,3 +26,26 @@ export const getRapportsQuerySchema = z.object({
  * Type TypeScript inféré du schéma getRapportsQuerySchema.
  */
 export type GetRapportsQuery = z.infer<typeof getRapportsQuerySchema>;
+
+/**
+ * Schéma Zod de validation pour le body de POST /rapports.
+ * Valide les données nécessaires pour créer un nouveau rapport de visite.
+ *
+ * - date: date de la visite (obligatoire, format date ISO)
+ * - motif: motif de la visite (optionnel, string ou null)
+ * - bilan: bilan de la visite (optionnel, string ou null)
+ * - idMedecin: identifiant du médecin visité (obligatoire, number)
+ */
+export const postRapportBodySchema = z.object({
+    date: z.iso.datetime({ message: 'La date doit être au format ISO 8601' }),
+    motif: z.string().nullable().optional(),
+    bilan: z.string().nullable().optional(),
+    idMedecin: z.number().int().positive({
+        message: "L'id du médecin doit être un entier positif",
+    }),
+});
+
+/**
+ * Type TypeScript inféré du schéma postRapportBodySchema.
+ */
+export type PostRapportBody = z.infer<typeof postRapportBodySchema>;
