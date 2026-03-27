@@ -19,3 +19,25 @@ export type Rapport = {
     /** Identifiant du médecin visité */
     idMedecin: number;
 };
+
+/**
+ * Informations minimales d'un médecin pour l'affichage dans un rapport.
+ * Utilisé dans RapportWithMedecin pour éviter d'inclure toutes les données.
+ */
+export type MedecinInfo = {
+    /** Identifiant numérique unique */
+    id: number;
+    /** Nom de famille du praticien */
+    nom: string;
+    /** Prénom du praticien */
+    prenom: string;
+};
+
+/**
+ * Rapport enrichi avec les informations du médecin associé.
+ * Utilisé pour l'affichage des rapports côté frontend.
+ */
+export type RapportWithMedecin = Rapport & {
+    /** Informations du médecin visité */
+    medecin: MedecinInfo;
+};
