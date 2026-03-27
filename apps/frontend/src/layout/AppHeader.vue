@@ -148,7 +148,7 @@ const handleSearch = async () => {
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem disabled>
+                            <DropdownMenuItem @click="router.push('/profil')">
                                 <User class="h-4 w-4" />
                                 Profil
                             </DropdownMenuItem>
