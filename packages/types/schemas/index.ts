@@ -16,4 +16,6 @@ export {
     type GetRapportsQuery,
     postRapportBodySchema,
     type PostRapportBody,
+    putRapportBodySchema,
+    type PutRapportBody,
 } from './rapport.js';

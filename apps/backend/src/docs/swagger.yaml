@@ -503,7 +503,7 @@ paths:
             tags:
                 - Rapports
             summary: Modifie un rapport de visite
-            description: Met à jour le motif et le bilan d'un rapport. Seul le visiteur propriétaire peut modifier son rapport. **Middlewares:** requireAuth
+            description: Met à jour le motif et le bilan d'un rapport. Seul le visiteur propriétaire peut modifier son rapport. **Middlewares:** requireAuth, validateBody(putRapportBodySchema)
             parameters:
                 - in: path
                   name: id

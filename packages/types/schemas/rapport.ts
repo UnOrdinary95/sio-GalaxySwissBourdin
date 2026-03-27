@@ -49,3 +49,20 @@ export const postRapportBodySchema = z.object({
  * Type TypeScript inféré du schéma postRapportBodySchema.
  */
 export type PostRapportBody = z.infer<typeof postRapportBodySchema>;
+
+/**
+ * Schéma Zod de validation pour le body de PUT /rapports/:id.
+ * Valide les données pour la mise à jour d'un rapport existant.
+ *
+ * - motif: nouveau motif de visite (optionnel, string max 100 caractères ou null)
+ * - bilan: nouveau bilan de visite (optionnel, string max 100 caractères ou null)
+ */
+export const putRapportBodySchema = z.object({
+    motif: z.string().max(100).nullable().optional(),
+    bilan: z.string().max(100).nullable().optional(),
+});
+
+/**
+ * Type TypeScript inféré du schéma putRapportBodySchema.
+ */
+export type PutRapportBody = z.infer<typeof putRapportBodySchema>;

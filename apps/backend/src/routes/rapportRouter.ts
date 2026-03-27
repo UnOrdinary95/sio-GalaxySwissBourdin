@@ -7,6 +7,7 @@ import {
 import {
     getRapportsQuerySchema,
     postRapportBodySchema,
+    putRapportBodySchema,
 } from '@gsb/types/schemas';
 import {
     handleGetRapportsPaginated,
@@ -77,7 +78,11 @@ rapportRouter.get(
  * @returns {404} Rapport non trouvé
  * @returns {500} Erreur serveur
  */
-rapportRouter.put('/:id', handlePutRapportByVisiteur);
+rapportRouter.put(
+    '/:id',
+    validateBody(putRapportBodySchema),
+    handlePutRapportByVisiteur
+);
 
 /**
  * DELETE /:id
