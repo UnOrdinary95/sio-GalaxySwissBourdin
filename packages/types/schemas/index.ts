@@ -10,3 +10,5 @@ export {
     loginInputSchema,
     type LoginInput,
 } from './visiteur.js';
+
+export { getRapportsQuerySchema, type GetRapportsQuery } from './rapport.js';
