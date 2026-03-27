@@ -1,5 +1,5 @@
 import pool from '../config/db.js';
-import type { Rapport } from '@gsb/types';
+import type { Rapport, RapportWithMedecin } from '@gsb/types';
 import {
     mapDatabaseError,
     NotFoundError,
@@ -8,27 +8,43 @@ import {
 
 /**
  * Récupère tous les rapports selon le type (visiteur ou médecin) et l'id.
+ * Inclut les informations du médecin associé (nom et prénom).
  *
  * @param {('visiteur' | 'medecin')} type - Type de filtrage (visiteur ou médecin)
  * @param {(string | number)} id - Identifiant du visiteur ou du médecin
- * @returns {Promise<Rapport[]>} Liste des rapports
+ * @returns {Promise<RapportWithMedecin[]>} Liste des rapports avec infos médecin
  * @throws {DatabaseError} En cas d'erreur lors de la requête
  */
 export const findManyRapports = async (
     type: 'visiteur' | 'medecin',
     id: string | number
-): Promise<Rapport[]> => {
+): Promise<RapportWithMedecin[]> => {
     try {
-        const column = type === 'visiteur' ? 'idVisiteur' : 'idMedecin';
+        const column = type === 'visiteur' ? 'r.idvisiteur' : 'r.idmedecin';
         const result = await pool.query(
-            `SELECT id, date, motif, bilan, "idVisiteur", "idMedecin"
-             FROM rapport
-             WHERE "${column}" = $1
-             ORDER BY date DESC, id DESC`,
+            `SELECT r.id, r.date, r.motif, r.bilan, r.idvisiteur, r.idmedecin,
+                    m.id as medecin_id, m.nom as medecin_nom, m.prenom as medecin_prenom
+             FROM rapport r
+             JOIN medecin m ON r.idmedecin = m.id
+             WHERE ${column} = $1
+             ORDER BY r.date DESC, r.id DESC`,
             [id]
         );
 
-        return result.rows as Rapport[];
+        // Transformation des résultats pour structurer l'objet medecin
+        return result.rows.map((row) => ({
+            id: row.id,
+            date: row.date,
+            motif: row.motif,
+            bilan: row.bilan,
+            idVisiteur: row.idvisiteur,
+            idMedecin: row.idmedecin,
+            medecin: {
+                id: row.medecin_id,
+                nom: row.medecin_nom,
+                prenom: row.medecin_prenom,
+            },
+        })) as RapportWithMedecin[];
     } catch (error) {
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
@@ -56,8 +72,8 @@ export const updateRapportByVisiteur = async (
         const result = await pool.query(
             `UPDATE rapport
              SET motif = $1, bilan = $2
-             WHERE id = $3 AND "idVisiteur" = $4
-             RETURNING id, date, motif, bilan, "idVisiteur", "idMedecin"`,
+             WHERE id = $3 AND idvisiteur = $4
+             RETURNING id, date, motif, bilan, idvisiteur, idmedecin`,
             [motif, bilan, idRapport, idVisiteur]
         );
 
@@ -87,7 +103,7 @@ export const deleteUniqueRapportByVisiteur = async (
     try {
         const result = await pool.query(
             `DELETE FROM rapport
-             WHERE id = $1 AND "idVisiteur" = $2
+             WHERE id = $1 AND idvisiteur = $2
              RETURNING id`,
             [idRapport, idVisiteur]
         );

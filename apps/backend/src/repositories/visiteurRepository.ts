@@ -62,7 +62,7 @@ export const authenticateVisiteur = async (
 ): Promise<VisiteurPublic> => {
     try {
         const result = await pool.query(
-            `SELECT id, nom, prenom, login, adresse, cp, ville, dateEmbauche
+            `SELECT id, nom, prenom, login, adresse, cp, ville, dateembauche
              FROM visiteur WHERE login = $1 AND mdp = $2`,
             [input.login, input.mdp]
         );
@@ -97,7 +97,7 @@ export const findUniqueVisiteur = async (
 ): Promise<VisiteurPublic> => {
     try {
         const result = await pool.query(
-            `SELECT id, nom, prenom, login, adresse, cp, ville, dateEmbauche
+            `SELECT id, nom, prenom, login, adresse, cp, ville, dateembauche
              FROM visiteur WHERE id = $1`,
             [id]
         );

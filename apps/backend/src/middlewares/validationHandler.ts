@@ -55,7 +55,6 @@ export const validateQuery = (schema: ZodType) => {
                 errors,
             });
         }
-        req.query = result.data as typeof req.query;
         next();
     };
 };

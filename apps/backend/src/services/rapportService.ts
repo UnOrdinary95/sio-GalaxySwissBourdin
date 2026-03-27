@@ -1,4 +1,4 @@
-import type { Rapport } from '@gsb/types';
+import type { Rapport, RapportWithMedecin } from '@gsb/types';
 import {
     findManyRapports,
     updateRapportByVisiteur,
@@ -8,15 +8,16 @@ import {
 /**
  * Récupère tous les rapports selon le type et l'id.
  * Délégation directe au repository sans logique métier additionnelle.
+ * Retourne les rapports avec les informations du médecin associé.
  *
  * @param {('visiteur' | 'medecin')} type - Type de filtrage
  * @param {(string | number)} id - Identifiant du visiteur ou médecin
- * @returns {Promise<Rapport[]>} Liste des rapports
+ * @returns {Promise<RapportWithMedecin[]>} Liste des rapports avec infos médecin
  */
 export const getRapports = async (
     type: 'visiteur' | 'medecin',
     id: string | number
-): Promise<Rapport[]> => {
+): Promise<RapportWithMedecin[]> => {
     return findManyRapports(type, id);
 };
 

@@ -831,6 +831,19 @@ components:
                 idMedecin:
                     type: integer
                     description: Identifiant du médecin visité
+                medecin:
+                    type: object
+                    description: Informations du médecin visité (présent uniquement sur GET /rapports)
+                    properties:
+                        id:
+                            type: integer
+                            description: Identifiant du médecin
+                        nom:
+                            type: string
+                            description: Nom du médecin
+                        prenom:
+                            type: string
+                            description: Prénom du médecin
 
         RapportUpdateInput:
             type: object
@@ -1029,3 +1042,61 @@ components:
             value:
                 success: false
                 error: 'Le paramètre de recherche "q" est requis'
+
+        ExampleGetRapportsSuccess:
+            summary: Récupération réussie des rapports
+            value:
+                success: true
+                data:
+                    - id: 1
+                      date: '2024-01-15'
+                      motif: Visite périodique
+                      bilan: Médecin intéressé par les nouveaux produits
+                      idVisiteur: aB12
+                      idMedecin: 42
+                      medecin:
+                          id: 42
+                          nom: Dupont
+                          prenom: Marie
+                    - id: 2
+                      date: '2024-01-20'
+                      motif: Présentation nouveauté
+                      bilan: null
+                      idVisiteur: aB12
+                      idMedecin: 15
+                      medecin:
+                          id: 15
+                          nom: Martin
+                          prenom: Jean
+                message: Rapports récupérés avec succès
+
+        ExampleUpdateRapportSuccess:
+            summary: Rapport modifié avec succès
+            value:
+                success: true
+                data:
+                    id: 1
+                    date: '2024-01-15'
+                    motif: Visite périodique mise à jour
+                    bilan: Nouveau bilan modifié
+                    idVisiteur: aB12
+                    idMedecin: 42
+                message: Rapport mis à jour avec succès
+
+        ExampleDeleteRapportSuccess:
+            summary: Rapport supprimé avec succès
+            value:
+                success: true
+                message: Rapport supprimé avec succès
+
+        ErrRapportsInvalidParams:
+            summary: Paramètres de requête invalides
+            value:
+                success: false
+                message: Paramètres invalides
+
+        ErrRapportNotFound:
+            summary: Rapport non trouvé ou non autorisé
+            value:
+                success: false
+                message: Rapport non trouvé ou non autorisé

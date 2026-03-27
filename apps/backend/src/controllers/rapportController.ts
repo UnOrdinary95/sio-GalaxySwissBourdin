@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { ApiResponse, Rapport } from '@gsb/types';
+import type { ApiResponse, RapportWithMedecin, Rapport } from '@gsb/types';
 import { makeSuccess } from '../utils/apiResponseUtils.js';
 import {
     getRapports,
@@ -9,17 +9,18 @@ import {
 
 /**
  * Gère la récupération des rapports filtrés par visiteur ou médecin.
+ * Retourne les rapports enrichis avec les informations du médecin associé.
  *
  * @param {Request} req - Requête Express avec query params type et id
- * @param {Response<ApiResponse<Rapport[]>>} res - Réponse Express
+ * @param {Response<ApiResponse<RapportWithMedecin[]>>} res - Réponse Express
  * @param {NextFunction} next - Fonction suivante pour gestion d'erreurs
- * @returns {Promise<Response<ApiResponse<Rapport[]>> | undefined>}
+ * @returns {Promise<Response<ApiResponse<RapportWithMedecin[]>> | undefined>}
  */
 export const handleGetRapports = async (
     req: Request,
-    res: Response<ApiResponse<Rapport[]>>,
+    res: Response<ApiResponse<RapportWithMedecin[]>>,
     next: NextFunction
-): Promise<Response<ApiResponse<Rapport[]>> | undefined> => {
+): Promise<Response<ApiResponse<RapportWithMedecin[]>> | undefined> => {
     try {
         const { type, id } = req.query as {
             type: 'visiteur' | 'medecin';
