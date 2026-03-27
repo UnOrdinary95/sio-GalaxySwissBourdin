@@ -420,7 +420,7 @@ paths:
             tags:
                 - Rapports
             summary: Liste les rapports de visite (paginé)
-            description: Récupère les rapports filtrés par visiteur connecté ou par médecin avec pagination. **Middlewares:** validateQuery(getRapportsQuerySchema). Authentification requise uniquement pour type=visiteur (l'idVisiteur est extrait du token JWT). Pour type=medecin, le paramètre id est requis et l'accès est public.
+            description: Récupère les rapports filtrés par visiteur connecté ou par médecin avec pagination. **Middlewares:** requireAuthForVisiteur, validateQuery(getRapportsQuerySchema). Authentification requise uniquement pour type=visiteur (l'idVisiteur est extrait du token JWT). Pour type=medecin, le paramètre id est requis et l'accès est public.
             parameters:
                 - in: query
                   name: type

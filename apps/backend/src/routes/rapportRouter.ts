@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { requireAuth } from '../middlewares/requireAuth.js';
+import { requireAuthForVisiteur } from '../middlewares/requireAuthForVisiteur.js';
 import {
     validateQuery,
     validateBody,
@@ -26,7 +27,7 @@ import {
  *
  * Endpoints:
  * - POST / - Crée un rapport (authentifié)
- * - GET / - Liste les rapports filtrés par visiteur (authentifié) ou médecin (public)
+ * - GET / - Liste les rapports filtrés par visiteur (auth requise) ou médecin (public)
  * - PUT /:id - Modifie le motif et bilan d'un rapport (authentifié)
  * - DELETE /:id - Supprime un rapport (authentifié)
  */
@@ -55,16 +56,19 @@ rapportRouter.post(
 /**
  * GET /
  * Récupère la liste des rapports filtrés par visiteur ou médecin.
+ * Authentification requise uniquement pour type=visiteur.
  *
  * @query {('visiteur' | 'medecin')} type - Type de filtrage
- * @query {string | number} id - Identifiant du visiteur ou médecin
+ * @query {string | number} id - Identifiant du visiteur ou médecin (requis pour type=medecin)
+ * @query {number} offset - Pagination offset
  * @returns {200} Liste des rapports
  * @returns {400} Paramètres invalides
- * @returns {401} Non authentifié
+ * @returns {401} Non authentifié (uniquement pour type=visiteur)
  * @returns {500} Erreur serveur
  */
 rapportRouter.get(
     '/',
+    requireAuthForVisiteur,
     validateQuery(getRapportsQuerySchema),
     handleGetRapportsPaginated
 );
