@@ -1,5 +1,5 @@
 import pool from '../config/db.js';
-import type { Rapport, RapportWithMedecin } from '@gsb/types';
+import type { Rapport, RapportWithMedecin, PostRapportBody } from '@gsb/types';
 import {
     mapDatabaseError,
     NotFoundError,
@@ -132,6 +132,42 @@ export const deleteUniqueRapportByVisiteur = async (
         if (result.rowCount === 0) {
             throw new NotFoundError('Rapport non trouvé ou non autorisé');
         }
+    } catch (error) {
+        const appError = mapDatabaseError(error as DatabaseErrorPayload);
+        throw appError;
+    }
+};
+
+/**
+ * Crée un nouveau rapport de visite.
+ *
+ * @param {string} idVisiteur - Identifiant du visiteur qui effectue le rapport
+ * @param {PostRapportBody} data - Données du rapport à créer
+ * @returns {Promise<Rapport>} Le rapport créé avec son id généré
+ * @throws {DatabaseError} En cas d'erreur lors de la requête
+ */
+export const insertRapport = async (
+    idVisiteur: string,
+    data: PostRapportBody
+): Promise<Rapport> => {
+    try {
+        const id = Math.floor(Math.random() * 900000) + 100000;
+
+        const result = await pool.query(
+            `INSERT INTO rapport (id, date, motif, bilan, idvisiteur, idmedecin)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             RETURNING id, date, motif, bilan, idvisiteur, idmedecin`,
+            [
+                id,
+                data.date,
+                data.motif ?? null,
+                data.bilan ?? null,
+                idVisiteur,
+                data.idMedecin,
+            ]
+        );
+
+        return result.rows[0] as Rapport;
     } catch (error) {
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;

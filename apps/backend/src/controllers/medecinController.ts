@@ -4,6 +4,7 @@ import { makeSuccess } from '../utils/apiResponseUtils.js';
 import {
     getMedecinsPaginated,
     getMedecinsPaginatedWithQuery,
+    getMedecin,
 } from '../services/medecinService.js';
 
 /**
@@ -85,6 +86,38 @@ export const handleGetMedecinsPaginatedWithQuery = async (
         return res
             .status(200)
             .json(makeSuccess(medecins, 'Liste des médecins récupérée'));
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Contrôleur HTTP pour récupérer un médecin par son identifiant.
+ * Orchestre la requête HTTP → service métier → réponse JSON.
+ *
+ * Path params:
+ * - `id` (required): identifiant du médecin
+ *
+ * @param {Request} req - Requête Express avec path params
+ * @param {Response} res - Réponse Express typée ApiResponse<Medecin>
+ * @param {NextFunction} next - Middleware suivant (pour la gestion d'erreurs)
+ * @returns {Promise<Response<ApiResponse<Medecin>> | undefined>}
+ * @throws {NotFoundError} Si le médecin n'existe pas
+ * @throws {DatabaseError} Erreurs base de données propagées au middleware d'erreurs global
+ */
+export const handleGetMedecin = async (
+    req: Request,
+    res: Response<ApiResponse<Medecin>>,
+    next: NextFunction
+): Promise<Response<ApiResponse<Medecin>> | undefined> => {
+    try {
+        const id = parseInt(String(req.params.id), 10);
+
+        const medecin = await getMedecin(id);
+
+        return res
+            .status(200)
+            .json(makeSuccess(medecin, 'Médecin récupéré avec succès'));
     } catch (error) {
         next(error);
     }

@@ -1,11 +1,18 @@
 import { Router } from 'express';
 import { requireAuth } from '../middlewares/requireAuth.js';
-import { validateQuery } from '../middlewares/validationHandler.js';
-import { getRapportsQuerySchema } from '@gsb/types/schemas';
+import {
+    validateQuery,
+    validateBody,
+} from '../middlewares/validationHandler.js';
+import {
+    getRapportsQuerySchema,
+    postRapportBodySchema,
+} from '@gsb/types/schemas';
 import {
     handleGetRapportsPaginated,
     handlePutRapportByVisiteur,
     handleDeleteRapportByVisiteur,
+    handlePostRapport,
 } from '../controllers/rapportController.js';
 
 /**
@@ -24,6 +31,21 @@ const rapportRouter = Router();
 
 // Middleware d'authentification global pour toutes les routes
 rapportRouter.use(requireAuth);
+
+/**
+ * POST /
+ * Crée un nouveau rapport de visite.
+ *
+ * @body {string} date - Date de la visite (format ISO 8601)
+ * @body {string | null} motif - Motif de la visite
+ * @body {string | null} bilan - Bilan de la visite
+ * @body {number} idMedecin - Identifiant du médecin visité
+ * @returns {201} Rapport créé avec succès
+ * @returns {400} Données invalides
+ * @returns {401} Non authentifié
+ * @returns {500} Erreur serveur
+ */
+rapportRouter.post('/', validateBody(postRapportBodySchema), handlePostRapport);
 
 /**
  * GET /

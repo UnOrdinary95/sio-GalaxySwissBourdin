@@ -6,6 +6,7 @@ import {
 import {
     findManyMedecinPaginated,
     findManyMedecinPaginatedWithQuery,
+    findUniqueMedecin,
 } from '../repositories/medecinRepository.js';
 
 /**
@@ -54,4 +55,17 @@ export const getMedecinsPaginatedWithQuery = async (
         limit: MEDECINS_PAGE_SIZE,
         offset,
     };
+};
+
+/**
+ * Récupère un médecin par son identifiant.
+ * Lève une erreur NotFoundError si le médecin n'existe pas.
+ *
+ * @param {number} id - Identifiant du médecin
+ * @returns {Promise<Medecin>} Le médecin trouvé
+ * @throws {NotFoundError} Si le médecin n'existe pas
+ * @throws {DatabaseError} Si la requête échoue
+ */
+export const getMedecin = async (id: number): Promise<Medecin> => {
+    return findUniqueMedecin(id);
 };

@@ -3,11 +3,13 @@ import {
     type Rapport,
     type RapportWithMedecin,
     type PaginatedResponse,
+    type PostRapportBody,
 } from '@gsb/types';
 import {
     findManyRapportsPaginated,
     updateRapportByVisiteur,
     deleteUniqueRapportByVisiteur,
+    insertRapport,
 } from '../repositories/rapportRepository.js';
 
 /**
@@ -75,4 +77,19 @@ export const deleteRapportByVisiteur = async (
     idVisiteur: string
 ): Promise<void> => {
     await deleteUniqueRapportByVisiteur(idRapport, idVisiteur);
+};
+
+/**
+ * Crée un nouveau rapport de visite.
+ *
+ * @param {string} idVisiteur - Identifiant du visiteur qui effectue le rapport
+ * @param {PostRapportBody} data - Données du rapport à créer
+ * @returns {Promise<Rapport>} Le rapport créé avec son id généré
+ * @throws {DatabaseError} En cas d'erreur lors de la requête
+ */
+export const postRapport = async (
+    idVisiteur: string,
+    data: PostRapportBody
+): Promise<Rapport> => {
+    return insertRapport(idVisiteur, data);
 };

@@ -300,7 +300,135 @@ paths:
                                 internal:
                                     $ref: '#/components/examples/ErrDatabaseMedecins'
 
+    /medecins/{id}:
+        get:
+            tags:
+                - Medecins
+            summary: Récupérer un médecin par son identifiant
+            description: Retourne les détails d'un médecin spécifique. **Middlewares:** requireAuth
+            parameters:
+                - in: path
+                  name: id
+                  schema:
+                      type: integer
+                      minimum: 1
+                  description: Identifiant unique du médecin
+                  required: true
+            responses:
+                '200':
+                    description: Médecin récupéré avec succès
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiSuccessMedecin'
+                            examples:
+                                success:
+                                    $ref: '#/components/examples/ExampleGetMedecinSuccess'
+                '401':
+                    description: Non authentifié (token manquant, invalide ou expiré)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                missingToken:
+                                    $ref: '#/components/examples/ErrAuthTokenMissing'
+                                invalidToken:
+                                    $ref: '#/components/examples/ErrAuthTokenInvalid'
+                                expiredToken:
+                                    $ref: '#/components/examples/ErrAuthTokenExpired'
+                '404':
+                    description: Médecin non trouvé
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                notFound:
+                                    $ref: '#/components/examples/ErrMedecinNotFound'
+                '500':
+                    description: Erreur serveur interne
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                internal:
+                                    $ref: '#/components/examples/ErrDatabaseMedecins'
+
     /rapports:
+        post:
+            tags:
+                - Rapports
+            summary: Créer un rapport de visite
+            description: Crée un nouveau rapport de visite pour un médecin. **Middlewares:** requireAuth, validateBody(postRapportBodySchema). L'idVisiteur est extrait automatiquement du token JWT.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PostRapportBody'
+                        examples:
+                            valid:
+                                summary: Exemple valide
+                                value:
+                                    date: '2024-01-15T10:00:00Z'
+                                    motif: 'Visite périodique'
+                                    bilan: 'Médecin intéressé'
+                                    idMedecin: 42
+            responses:
+                '201':
+                    description: Rapport créé avec succès
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiSuccessRapport'
+                            examples:
+                                success:
+                                    $ref: '#/components/examples/ExampleCreateRapportSuccess'
+                '400':
+                    description: Erreur de validation des données
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiValidationError'
+                            examples:
+                                invalidDate:
+                                    $ref: '#/components/examples/ErrZodRapportInvalidDate'
+                                invalidMedecin:
+                                    $ref: '#/components/examples/ErrZodRapportInvalidMedecin'
+                '401':
+                    description: Non authentifié (token manquant, invalide ou expiré)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                missingToken:
+                                    $ref: '#/components/examples/ErrAuthTokenMissing'
+                                invalidToken:
+                                    $ref: '#/components/examples/ErrAuthTokenInvalid'
+                                expiredToken:
+                                    $ref: '#/components/examples/ErrAuthTokenExpired'
+                '404':
+                    description: Médecin non trouvé (foreign key violation)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                notFound:
+                                    $ref: '#/components/examples/ErrRapportMedecinNotFound'
+                '500':
+                    description: Erreur serveur interne
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiErrorMessage'
+                            examples:
+                                internal:
+                                    $ref: '#/components/examples/ErrDatabaseInternal'
+
         get:
             tags:
                 - Rapports
@@ -867,6 +995,47 @@ components:
                     nullable: true
                     description: Nouveau bilan de la visite
 
+        PostRapportBody:
+            type: object
+            required:
+                - date
+                - idMedecin
+            properties:
+                date:
+                    type: string
+                    format: date-time
+                    description: Date de la visite au format ISO 8601
+                motif:
+                    type: string
+                    maxLength: 100
+                    nullable: true
+                    description: Motif de la visite
+                bilan:
+                    type: string
+                    maxLength: 100
+                    nullable: true
+                    description: Bilan de la visite
+                idMedecin:
+                    type: integer
+                    minimum: 1
+                    description: Identifiant du médecin visité
+
+        ApiSuccessMedecin:
+            type: object
+            required:
+                - success
+                - data
+                - message
+            properties:
+                success:
+                    type: boolean
+                    enum: [true]
+                data:
+                    $ref: '#/components/schemas/Medecin'
+                message:
+                    type: string
+                    description: Message de confirmation
+
         ApiSuccessRapports:
             type: object
             required:
@@ -1129,3 +1298,58 @@ components:
             value:
                 success: false
                 message: Rapport non trouvé ou non autorisé
+
+        ExampleGetMedecinSuccess:
+            summary: Récupération réussie d'un médecin
+            value:
+                success: true
+                data:
+                    id: 42
+                    nom: Dupont
+                    prenom: Marie
+                    adresse: 123 Rue de Paris
+                    tel: '0123456789'
+                    specialitecomplementaire: Cardiologie
+                    departement: 75
+                message: Médecin récupéré avec succès
+
+        ErrMedecinNotFound:
+            summary: Médecin non trouvé
+            value:
+                success: false
+                message: Médecin non trouvé
+
+        ExampleCreateRapportSuccess:
+            summary: Rapport créé avec succès
+            value:
+                success: true
+                data:
+                    id: 1590
+                    date: '2024-01-15T10:00:00Z'
+                    motif: Visite périodique
+                    bilan: Médecin intéressé
+                    idVisiteur: aB12
+                    idMedecin: 42
+                message: Rapport créé avec succès
+
+        ErrZodRapportInvalidDate:
+            summary: Date invalide
+            value:
+                success: false
+                errors:
+                    date:
+                        - La date doit être au format ISO 8601
+
+        ErrZodRapportInvalidMedecin:
+            summary: Identifiant médecin invalide
+            value:
+                success: false
+                errors:
+                    idMedecin:
+                        - L'id du médecin doit être un entier positif
+
+        ErrRapportMedecinNotFound:
+            summary: Médecin non trouvé lors de la création du rapport
+            value:
+                success: false
+                message: Ressource liée introuvable

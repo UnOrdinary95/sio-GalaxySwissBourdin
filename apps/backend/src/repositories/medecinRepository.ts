@@ -2,6 +2,7 @@ import pool from '../config/db.js';
 import type { Medecin } from '@gsb/types';
 import {
     mapDatabaseError,
+    NotFoundError,
     type DatabaseErrorPayload,
 } from '../errors/AppError.js';
 
@@ -83,6 +84,34 @@ export const findManyMedecinPaginatedWithQuery = async (
             items: itemsResult.rows as Medecin[],
             total: countResult.rows[0].total,
         };
+    } catch (error) {
+        const appError = mapDatabaseError(error as DatabaseErrorPayload);
+        throw appError;
+    }
+};
+
+/**
+ * Récupère un médecin par son identifiant unique.
+ *
+ * @param {number} id - Identifiant du médecin
+ * @returns {Promise<Medecin>} Le médecin trouvé
+ * @throws {NotFoundError} Si le médecin n'existe pas
+ * @throws {DatabaseError} En cas d'erreur lors de la requête
+ */
+export const findUniqueMedecin = async (id: number): Promise<Medecin> => {
+    try {
+        const result = await pool.query(
+            `SELECT id, nom, prenom, adresse, tel, specialitecomplementaire, departement
+             FROM medecin
+             WHERE id = $1`,
+            [id]
+        );
+
+        if (result.rowCount === 0) {
+            throw new NotFoundError('Médecin non trouvé');
+        }
+
+        return result.rows[0] as Medecin;
     } catch (error) {
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;

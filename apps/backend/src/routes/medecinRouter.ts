@@ -1,7 +1,9 @@
 import { Router } from 'express';
+import { requireAuth } from '../middlewares/requireAuth.js';
 import {
     handleGetMedecinsPaginated,
     handleGetMedecinsPaginatedWithQuery,
+    handleGetMedecin,
 } from '../controllers/medecinController.js';
 
 /**
@@ -37,5 +39,17 @@ medecinRouter.get('/', handleGetMedecinsPaginated);
  * @returns {500} Erreur serveur / base de données
  */
 medecinRouter.get('/search', handleGetMedecinsPaginatedWithQuery);
+
+/**
+ * GET /:id
+ * Récupère un médecin par son identifiant.
+ *
+ * @param {number} id - Identifiant du médecin
+ * @returns {200} Médecin trouvé
+ * @returns {401} Non authentifié
+ * @returns {404} Médecin non trouvé
+ * @returns {500} Erreur serveur / base de données
+ */
+medecinRouter.get('/:id', requireAuth, handleGetMedecin);
 
 export default medecinRouter;

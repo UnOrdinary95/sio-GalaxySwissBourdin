@@ -5,12 +5,14 @@ import {
     type RapportWithMedecin,
     type Rapport,
     type PaginatedResponse,
+    type PostRapportBody,
 } from '@gsb/types';
 import { makeSuccess } from '../utils/apiResponseUtils.js';
 import {
     getRapportsPaginated,
     putRapportByVisiteur,
     deleteRapportByVisiteur,
+    postRapport,
 } from '../services/rapportService.js';
 
 /**
@@ -122,6 +124,33 @@ export const handleDeleteRapportByVisiteur = async (
         return res
             .status(200)
             .json(makeSuccess(true, 'Rapport supprimé avec succès'));
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Gère la création d'un nouveau rapport de visite.
+ *
+ * @param {Request} req - Requête Express avec les données du rapport dans le body
+ * @param {Response<ApiResponse<Rapport>>} res - Réponse Express
+ * @param {NextFunction} next - Fonction suivante pour gestion d'erreurs
+ * @returns {Promise<Response<ApiResponse<Rapport>> | undefined>}
+ */
+export const handlePostRapport = async (
+    req: Request,
+    res: Response<ApiResponse<Rapport>>,
+    next: NextFunction
+): Promise<Response<ApiResponse<Rapport>> | undefined> => {
+    try {
+        const idVisiteur = req.authUser!.id;
+        const data = req.body as PostRapportBody;
+
+        const rapport = await postRapport(idVisiteur, data);
+
+        return res
+            .status(201)
+            .json(makeSuccess(rapport, 'Rapport créé avec succès'));
     } catch (error) {
         next(error);
     }
