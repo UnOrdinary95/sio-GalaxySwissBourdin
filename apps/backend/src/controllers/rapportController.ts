@@ -7,7 +7,7 @@ import {
     type PaginatedResponse,
     type PostRapportBody,
 } from '@gsb/types';
-import { makeSuccess } from '../utils/apiResponseUtils.js';
+import { makeSuccess, makeError } from '../utils/apiResponseUtils.js';
 import {
     getRapportsPaginated,
     putRapportByVisiteur,
@@ -40,7 +40,16 @@ export const handleGetRapportsPaginated = async (
 
         let idValue: string | number;
         if (type === 'visiteur') {
-            idValue = req.authUser!.id;
+            if (!req.authUser) {
+                return res
+                    .status(401)
+                    .json(
+                        makeError(
+                            'Authentification requise pour accéder aux rapports du visiteur'
+                        )
+                    );
+            }
+            idValue = req.authUser.id;
         } else {
             if (!id) {
                 return res.status(400).json(

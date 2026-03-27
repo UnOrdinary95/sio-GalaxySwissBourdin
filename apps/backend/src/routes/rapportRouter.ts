@@ -19,19 +19,18 @@ import {
 /**
  * Routeur pour les endpoints liés aux rapports de visite.
  * Gère la récupération, la modification et la suppression des rapports.
- * Toutes les routes nécessitent une authentification.
+ * L'authentification est requise pour POST, PUT, DELETE et pour GET avec type=visiteur.
+ * GET avec type=medecin est accessible publiquement.
  *
  * @type {Router}
  *
  * Endpoints:
- * - GET / - Liste les rapports filtrés par visiteur ou médecin
- * - PUT /:id - Modifie le motif et bilan d'un rapport
- * - DELETE /:id - Supprime un rapport
+ * - POST / - Crée un rapport (authentifié)
+ * - GET / - Liste les rapports filtrés par visiteur (authentifié) ou médecin (public)
+ * - PUT /:id - Modifie le motif et bilan d'un rapport (authentifié)
+ * - DELETE /:id - Supprime un rapport (authentifié)
  */
 const rapportRouter = Router();
-
-// Middleware d'authentification global pour toutes les routes
-rapportRouter.use(requireAuth);
 
 /**
  * POST /
@@ -46,7 +45,12 @@ rapportRouter.use(requireAuth);
  * @returns {401} Non authentifié
  * @returns {500} Erreur serveur
  */
-rapportRouter.post('/', validateBody(postRapportBodySchema), handlePostRapport);
+rapportRouter.post(
+    '/',
+    requireAuth,
+    validateBody(postRapportBodySchema),
+    handlePostRapport
+);
 
 /**
  * GET /
@@ -80,6 +84,7 @@ rapportRouter.get(
  */
 rapportRouter.put(
     '/:id',
+    requireAuth,
     validateBody(putRapportBodySchema),
     handlePutRapportByVisiteur
 );
@@ -95,6 +100,6 @@ rapportRouter.put(
  * @returns {404} Rapport non trouvé
  * @returns {500} Erreur serveur
  */
-rapportRouter.delete('/:id', handleDeleteRapportByVisiteur);
+rapportRouter.delete('/:id', requireAuth, handleDeleteRapportByVisiteur);
 
 export default rapportRouter;

@@ -305,7 +305,7 @@ paths:
             tags:
                 - Medecins
             summary: Récupérer un médecin par son identifiant
-            description: Retourne les détails d'un médecin spécifique. **Middlewares:** requireAuth
+            description: Retourne les détails d'un médecin spécifique. **Middlewares:** Aucun
             parameters:
                 - in: path
                   name: id
@@ -324,19 +324,6 @@ paths:
                             examples:
                                 success:
                                     $ref: '#/components/examples/ExampleGetMedecinSuccess'
-                '401':
-                    description: Non authentifié (token manquant, invalide ou expiré)
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ApiErrorMessage'
-                            examples:
-                                missingToken:
-                                    $ref: '#/components/examples/ErrAuthTokenMissing'
-                                invalidToken:
-                                    $ref: '#/components/examples/ErrAuthTokenInvalid'
-                                expiredToken:
-                                    $ref: '#/components/examples/ErrAuthTokenExpired'
                 '404':
                     description: Médecin non trouvé
                     content:
@@ -433,7 +420,7 @@ paths:
             tags:
                 - Rapports
             summary: Liste les rapports de visite (paginé)
-            description: Récupère les rapports filtrés par visiteur connecté ou par médecin avec pagination. **Middlewares:** requireAuth, validateQuery(getRapportsQuerySchema). Pour type=visiteur, l'idVisiteur est extrait automatiquement du token JWT (paramètre id ignoré). Pour type=medecin, le paramètre id est requis.
+            description: Récupère les rapports filtrés par visiteur connecté ou par médecin avec pagination. **Middlewares:** validateQuery(getRapportsQuerySchema). Authentification requise uniquement pour type=visiteur (l'idVisiteur est extrait du token JWT). Pour type=medecin, le paramètre id est requis et l'accès est public.
             parameters:
                 - in: query
                   name: type
@@ -476,7 +463,7 @@ paths:
                                 invalidParams:
                                     $ref: '#/components/examples/ErrRapportsInvalidParams'
                 '401':
-                    description: Non authentifié (token manquant, invalide ou expiré)
+                    description: Non authentifié (token manquant, invalide ou expiré) - uniquement pour type=visiteur
                     content:
                         application/json:
                             schema:

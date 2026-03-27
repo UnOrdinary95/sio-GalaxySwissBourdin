@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { requireAuth } from '../middlewares/requireAuth.js';
 import {
     handleGetMedecinsPaginated,
     handleGetMedecinsPaginatedWithQuery,
@@ -15,6 +14,7 @@ import {
  * Endpoints:
  * - GET / - Récupère une liste paginée de tous les médecins
  * - GET /search - Recherche paginée de médecins par nom/prénom
+ * - GET /:id - Récupère un médecin par son identifiant (public)
  */
 const medecinRouter = Router();
 
@@ -46,10 +46,9 @@ medecinRouter.get('/search', handleGetMedecinsPaginatedWithQuery);
  *
  * @param {number} id - Identifiant du médecin
  * @returns {200} Médecin trouvé
- * @returns {401} Non authentifié
  * @returns {404} Médecin non trouvé
  * @returns {500} Erreur serveur / base de données
  */
-medecinRouter.get('/:id', requireAuth, handleGetMedecin);
+medecinRouter.get('/:id', handleGetMedecin);
 
 export default medecinRouter;
