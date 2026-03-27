@@ -4,11 +4,13 @@ import { MoreHorizontal, Pencil, Trash2 } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 import { useAuthStore } from '@/stores/authStore.js';
 import {
-    getRapportsByVisiteur,
+    getRapportsByVisiteurPaginated,
     updateRapport,
     deleteRapport,
 } from '@/services/rapportService.js';
+import { RAPPORTS_PAGE_SIZE } from '@gsb/types/constants';
 import type { RapportWithMedecin } from '@gsb/types';
+import PaginationControls from '../home/PaginationControls.vue';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,6 +53,8 @@ const authStore = useAuthStore();
 
 const rapports = ref<RapportWithMedecin[]>([]);
 const loading = ref(false);
+const currentPage = ref(1);
+const totalRapports = ref(0);
 
 const isEditDialogOpen = ref(false);
 const isDeleteDialogOpen = ref(false);
@@ -59,12 +63,15 @@ const editMotif = ref('');
 const editBilan = ref('');
 const isSubmitting = ref(false);
 
-const fetchRapports = async () => {
+const fetchRapports = async (page: number = 1) => {
     try {
         loading.value = true;
-        const response = await getRapportsByVisiteur();
+        const offset = (page - 1) * RAPPORTS_PAGE_SIZE;
+        const response = await getRapportsByVisiteurPaginated(offset);
+
         if (response.success && response.data) {
-            rapports.value = response.data;
+            rapports.value = response.data.items;
+            totalRapports.value = response.data.total;
         }
     } catch {
         toast.error('Erreur', {
@@ -102,7 +109,7 @@ const handleUpdate = async () => {
                 description: 'Rapport modifié avec succès.',
             });
             isEditDialogOpen.value = false;
-            await fetchRapports();
+            await fetchRapports(currentPage.value);
         }
     } catch {
         toast.error('Erreur', {
@@ -125,7 +132,16 @@ const handleDelete = async () => {
                 description: 'Rapport supprimé avec succès.',
             });
             isDeleteDialogOpen.value = false;
-            await fetchRapports();
+
+            // Si on supprime le dernier élément de la page, on revient à la page précédente
+            const isLastItemOnPage = rapports.value.length === 1;
+            const isNotFirstPage = currentPage.value > 1;
+
+            if (isLastItemOnPage && isNotFirstPage) {
+                currentPage.value--;
+            }
+
+            await fetchRapports(currentPage.value);
         }
     } catch {
         toast.error('Erreur', {
@@ -139,6 +155,12 @@ const handleDelete = async () => {
 const formatDate = (dateString: string | null): string => {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('fr-FR');
+};
+
+const handlePageChange = (newPage: number) => {
+    currentPage.value = newPage;
+    fetchRapports(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 onMounted(() => {
@@ -285,6 +307,14 @@ onMounted(() => {
                             </TableRow>
                         </TableBody>
                     </Table>
+
+                    <PaginationControls
+                        v-if="!loading && totalRapports > 0"
+                        :current-page="currentPage"
+                        :total-items="totalRapports"
+                        :items-per-page="RAPPORTS_PAGE_SIZE"
+                        @page-change="handlePageChange"
+                    />
                 </div>
             </CardContent>
         </Card>

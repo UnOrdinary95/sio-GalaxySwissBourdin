@@ -1,52 +1,52 @@
 {
-  "name": "@gsb/frontend",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build",
-    "lint": "eslint \"src/**/*.{ts,js,vue}\"",
-    "lint:fix": "eslint \"src/**/*.{ts,js,vue}\" --fix",
-    "format": "prettier --write \"src/**/*.{ts,js,vue,css,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,js,vue,css,json}\""
-  },
-  "dependencies": {
-    "@gsb/types": "workspace:*",
-    "@gsb/utils": "workspace:*",
-    "@tanstack/vue-table": "^8.21.3",
-    "@vee-validate/zod": "^4.15.1",
-    "@vueuse/core": "^14.2.1",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-vue-next": "^0.577.0",
-    "pinia": "^3.0.4",
-    "reka-ui": "^2.9.2",
-    "tailwind-merge": "^3.5.0",
-    "vee-validate": "^4.15.1",
-    "vue": "^3.5.29",
-    "vue-router": "^5.0.3",
-    "vue-sonner": "^2.0.9",
-    "zod": "^4.3.6"
-  },
-  "devDependencies": {
-    "@tailwindcss/vite": "^4.2.2",
-    "@tsconfig/node24": "^24.0.4",
-    "@types/node": "^24.11.0",
-    "@vitejs/plugin-vue": "^6.0.4",
-    "@vue/tsconfig": "^0.8.1",
-    "axios": "^1.13.6",
-    "npm-run-all2": "^8.0.4",
-    "tailwindcss": "^4.2.2",
-    "typescript": "~5.9.3",
-    "vite": "^7.3.1",
-    "vite-plugin-vue-devtools": "^8.0.6",
-    "vue-tsc": "^3.2.5"
-  },
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
-  }
+    "name": "@gsb/frontend",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "run-p type-check \"build-only {@}\" --",
+        "preview": "vite preview",
+        "build-only": "vite build",
+        "type-check": "vue-tsc --build",
+        "lint": "eslint \"src/**/*.{ts,js,vue}\"",
+        "lint:fix": "eslint \"src/**/*.{ts,js,vue}\" --fix",
+        "format": "prettier --write \"src/**/*.{ts,js,vue,css,json}\" --ignore-path ../../.prettierignore",
+        "format:check": "prettier --check \"src/**/*.{ts,js,vue,css,json}\" --ignore-path ../../.prettierignore"
+    },
+    "dependencies": {
+        "@gsb/types": "workspace:*",
+        "@gsb/utils": "workspace:*",
+        "@tanstack/vue-table": "^8.21.3",
+        "@vee-validate/zod": "^4.15.1",
+        "@vueuse/core": "^14.2.1",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "lucide-vue-next": "^0.577.0",
+        "pinia": "^3.0.4",
+        "reka-ui": "^2.9.2",
+        "tailwind-merge": "^3.5.0",
+        "vee-validate": "^4.15.1",
+        "vue": "^3.5.29",
+        "vue-router": "^5.0.3",
+        "vue-sonner": "^2.0.9",
+        "zod": "^4.3.6"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.2.2",
+        "@tsconfig/node24": "^24.0.4",
+        "@types/node": "^24.11.0",
+        "@vitejs/plugin-vue": "^6.0.4",
+        "@vue/tsconfig": "^0.8.1",
+        "axios": "^1.13.6",
+        "npm-run-all2": "^8.0.4",
+        "tailwindcss": "^4.2.2",
+        "typescript": "~5.9.3",
+        "vite": "^7.3.1",
+        "vite-plugin-vue-devtools": "^8.0.6",
+        "vue-tsc": "^3.2.5"
+    },
+    "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+    }
 }

@@ -1,19 +1,26 @@
 import api from '@/lib/axios.js';
-import type { ApiResponse, Rapport, RapportWithMedecin } from '@gsb/types';
+import type {
+    ApiResponse,
+    Rapport,
+    RapportWithMedecin,
+    PaginatedResponse,
+} from '@gsb/types';
 
 /**
- * Récupère la liste des rapports du visiteur connecté.
+ * Récupère la liste paginée des rapports du visiteur connecté.
  * Inclut les informations du médecin associé à chaque rapport.
+ *
+ * @param {number} offset - Nombre de rapports à ignorer pour la pagination
+ * @returns {Promise<ApiResponse<PaginatedResponse<RapportWithMedecin>>>} Rapports paginés avec infos médecin
  */
-export const getRapportsByVisiteur = async (): Promise<
-    ApiResponse<RapportWithMedecin[]>
-> => {
-    const response = await api.get<ApiResponse<RapportWithMedecin[]>>(
-        '/rapports',
-        {
-            params: { type: 'visiteur' },
-        }
-    );
+export const getRapportsByVisiteurPaginated = async (
+    offset: number = 0
+): Promise<ApiResponse<PaginatedResponse<RapportWithMedecin>>> => {
+    const response = await api.get<
+        ApiResponse<PaginatedResponse<RapportWithMedecin>>
+    >('/rapports', {
+        params: { type: 'visiteur', offset },
+    });
     return response.data;
 };
 
