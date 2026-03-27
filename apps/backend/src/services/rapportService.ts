@@ -1,24 +1,42 @@
-import type { Rapport, RapportWithMedecin } from '@gsb/types';
 import {
-    findManyRapports,
+    RAPPORTS_PAGE_SIZE,
+    type Rapport,
+    type RapportWithMedecin,
+    type PaginatedResponse,
+} from '@gsb/types';
+import {
+    findManyRapportsPaginated,
     updateRapportByVisiteur,
     deleteUniqueRapportByVisiteur,
 } from '../repositories/rapportRepository.js';
 
 /**
- * Récupère tous les rapports selon le type et l'id.
- * Délégation directe au repository sans logique métier additionnelle.
+ * Récupère les rapports paginés selon le type et l'id.
  * Retourne les rapports avec les informations du médecin associé.
  *
  * @param {('visiteur' | 'medecin')} type - Type de filtrage
  * @param {(string | number)} id - Identifiant du visiteur ou médecin
- * @returns {Promise<RapportWithMedecin[]>} Liste des rapports avec infos médecin
+ * @param {number} offset - Nombre de rapports à ignorer pour la pagination
+ * @returns {Promise<PaginatedResponse<RapportWithMedecin>>} Rapports paginés avec infos médecin
  */
-export const getRapports = async (
+export const getRapportsPaginated = async (
     type: 'visiteur' | 'medecin',
-    id: string | number
-): Promise<RapportWithMedecin[]> => {
-    return findManyRapports(type, id);
+    id: string | number,
+    offset: number
+): Promise<PaginatedResponse<RapportWithMedecin>> => {
+    const result = await findManyRapportsPaginated(
+        type,
+        id,
+        RAPPORTS_PAGE_SIZE,
+        offset
+    );
+
+    return {
+        items: result.items,
+        total: result.total,
+        limit: RAPPORTS_PAGE_SIZE,
+        offset,
+    };
 };
 
 /**

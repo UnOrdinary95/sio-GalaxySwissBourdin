@@ -1,30 +1,39 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { ApiResponse, RapportWithMedecin, Rapport } from '@gsb/types';
+import {
+    RAPPORTS_PAGE_SIZE,
+    type ApiResponse,
+    type RapportWithMedecin,
+    type Rapport,
+    type PaginatedResponse,
+} from '@gsb/types';
 import { makeSuccess } from '../utils/apiResponseUtils.js';
 import {
-    getRapports,
+    getRapportsPaginated,
     putRapportByVisiteur,
     deleteRapportByVisiteur,
 } from '../services/rapportService.js';
 
 /**
- * Gère la récupération des rapports filtrés par visiteur ou médecin.
+ * Gère la récupération des rapports filtrés par visiteur ou médecin avec pagination.
  * Retourne les rapports enrichis avec les informations du médecin associé.
  *
- * @param {Request} req - Requête Express avec query params type et id
- * @param {Response<ApiResponse<RapportWithMedecin[]>>} res - Réponse Express
+ * @param {Request} req - Requête Express avec query params type, id et offset
+ * @param {Response<ApiResponse<PaginatedResponse<RapportWithMedecin>>>} res - Réponse Express
  * @param {NextFunction} next - Fonction suivante pour gestion d'erreurs
- * @returns {Promise<Response<ApiResponse<RapportWithMedecin[]>> | undefined>}
+ * @returns {Promise<Response<ApiResponse<PaginatedResponse<RapportWithMedecin>>> | undefined>}
  */
-export const handleGetRapports = async (
+export const handleGetRapportsPaginated = async (
     req: Request,
-    res: Response<ApiResponse<RapportWithMedecin[]>>,
+    res: Response<ApiResponse<PaginatedResponse<RapportWithMedecin>>>,
     next: NextFunction
-): Promise<Response<ApiResponse<RapportWithMedecin[]>> | undefined> => {
+): Promise<
+    Response<ApiResponse<PaginatedResponse<RapportWithMedecin>>> | undefined
+> => {
     try {
-        const { type, id } = req.query as {
+        const { type, id, offset } = req.query as unknown as {
             type: 'visiteur' | 'medecin';
             id?: string;
+            offset: number;
         };
 
         let idValue: string | number;
@@ -32,19 +41,22 @@ export const handleGetRapports = async (
             idValue = req.authUser!.id;
         } else {
             if (!id) {
-                return res
-                    .status(400)
-                    .json(
-                        makeSuccess(
-                            [],
-                            "Paramètre 'id' requis pour le filtrage par médecin"
-                        )
-                    );
+                return res.status(400).json(
+                    makeSuccess(
+                        {
+                            items: [],
+                            total: 0,
+                            limit: RAPPORTS_PAGE_SIZE,
+                            offset: 0,
+                        },
+                        "Paramètre 'id' requis pour le filtrage par médecin"
+                    )
+                );
             }
             idValue = parseInt(id, 10);
         }
 
-        const rapports = await getRapports(type, idValue);
+        const rapports = await getRapportsPaginated(type, idValue, offset);
 
         return res
             .status(200)

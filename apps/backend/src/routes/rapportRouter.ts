@@ -3,7 +3,7 @@ import { requireAuth } from '../middlewares/requireAuth.js';
 import { validateQuery } from '../middlewares/validationHandler.js';
 import { getRapportsQuerySchema } from '@gsb/types/schemas';
 import {
-    handleGetRapports,
+    handleGetRapportsPaginated,
     handlePutRapportByVisiteur,
     handleDeleteRapportByVisiteur,
 } from '../controllers/rapportController.js';
@@ -39,7 +39,7 @@ rapportRouter.use(requireAuth);
 rapportRouter.get(
     '/',
     validateQuery(getRapportsQuerySchema),
-    handleGetRapports
+    handleGetRapportsPaginated
 );
 
 /**

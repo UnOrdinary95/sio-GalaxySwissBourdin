@@ -304,8 +304,8 @@ paths:
         get:
             tags:
                 - Rapports
-            summary: Liste les rapports de visite
-            description: Récupère tous les rapports filtrés par visiteur connecté ou par médecin. **Middlewares:** requireAuth, validateQuery(getRapportsQuerySchema). Pour type=visiteur, l'idVisiteur est extrait automatiquement du token JWT (paramètre id ignoré). Pour type=medecin, le paramètre id est requis.
+            summary: Liste les rapports de visite (paginé)
+            description: Récupère les rapports filtrés par visiteur connecté ou par médecin avec pagination. **Middlewares:** requireAuth, validateQuery(getRapportsQuerySchema). Pour type=visiteur, l'idVisiteur est extrait automatiquement du token JWT (paramètre id ignoré). Pour type=medecin, le paramètre id est requis.
             parameters:
                 - in: query
                   name: type
@@ -319,6 +319,14 @@ paths:
                   schema:
                       type: string
                   description: Identifiant du médecin (integer) - requis uniquement pour type=medecin
+                  required: false
+                - in: query
+                  name: offset
+                  schema:
+                      type: integer
+                      minimum: 0
+                      default: 0
+                  description: Nombre de rapports à ignorer (offset pour la pagination)
                   required: false
             responses:
                 '200':
@@ -870,10 +878,27 @@ components:
                     type: boolean
                     enum: [true]
                 data:
-                    type: array
-                    items:
-                        $ref: "#/components/schemas/Rapport"
-                    description: Liste des rapports
+                    type: object
+                    required:
+                        - items
+                        - total
+                        - limit
+                        - offset
+                    properties:
+                        items:
+                            type: array
+                            items:
+                                $ref: '#/components/schemas/Rapport'
+                            description: Liste des rapports de la page courante avec infos médecin
+                        total:
+                            type: integer
+                            description: Nombre total de rapports pour ce filtre
+                        limit:
+                            type: integer
+                            description: Taille de la page (fixée à 10)
+                        offset:
+                            type: integer
+                            description: Offset utilisé pour la requête
                 message:
                     type: string
                     description: Message de confirmation
@@ -1044,30 +1069,34 @@ components:
                 error: 'Le paramètre de recherche "q" est requis'
 
         ExampleGetRapportsSuccess:
-            summary: Récupération réussie des rapports
+            summary: Récupération réussie des rapports (paginé)
             value:
                 success: true
                 data:
-                    - id: 1
-                      date: '2024-01-15'
-                      motif: Visite périodique
-                      bilan: Médecin intéressé par les nouveaux produits
-                      idVisiteur: aB12
-                      idMedecin: 42
-                      medecin:
-                          id: 42
-                          nom: Dupont
-                          prenom: Marie
-                    - id: 2
-                      date: '2024-01-20'
-                      motif: Présentation nouveauté
-                      bilan: null
-                      idVisiteur: aB12
-                      idMedecin: 15
-                      medecin:
-                          id: 15
-                          nom: Martin
-                          prenom: Jean
+                    items:
+                        - id: 1
+                          date: '2024-01-15'
+                          motif: Visite périodique
+                          bilan: Médecin intéressé par les nouveaux produits
+                          idVisiteur: aB12
+                          idMedecin: 42
+                          medecin:
+                              id: 42
+                              nom: Dupont
+                              prenom: Marie
+                        - id: 2
+                          date: '2024-01-20'
+                          motif: Présentation nouveauté
+                          bilan: null
+                          idVisiteur: aB12
+                          idMedecin: 15
+                          medecin:
+                              id: 15
+                              nom: Martin
+                              prenom: Jean
+                    total: 45
+                    limit: 10
+                    offset: 0
                 message: Rapports récupérés avec succès
 
         ExampleUpdateRapportSuccess:

@@ -9,30 +9,46 @@ import {
 /**
  * Récupère tous les rapports selon le type (visiteur ou médecin) et l'id.
  * Inclut les informations du médecin associé (nom et prénom).
+ * Supporte la pagination avec limit et offset.
  *
  * @param {('visiteur' | 'medecin')} type - Type de filtrage (visiteur ou médecin)
  * @param {(string | number)} id - Identifiant du visiteur ou du médecin
- * @returns {Promise<RapportWithMedecin[]>} Liste des rapports avec infos médecin
+ * @param {number} limit - Nombre maximum de rapports à retourner
+ * @param {number} offset - Nombre de rapports à ignorer
+ * @returns {Promise<{ items: RapportWithMedecin[]; total: number }>} Liste paginée des rapports avec infos médecin et total
  * @throws {DatabaseError} En cas d'erreur lors de la requête
  */
-export const findManyRapports = async (
+export const findManyRapportsPaginated = async (
     type: 'visiteur' | 'medecin',
-    id: string | number
-): Promise<RapportWithMedecin[]> => {
+    id: string | number,
+    limit: number,
+    offset: number
+): Promise<{ items: RapportWithMedecin[]; total: number }> => {
     try {
         const column = type === 'visiteur' ? 'r.idvisiteur' : 'r.idmedecin';
-        const result = await pool.query(
+
+        // Récupération des rapports paginés
+        const itemsResult = await pool.query(
             `SELECT r.id, r.date, r.motif, r.bilan, r.idvisiteur, r.idmedecin,
                     m.id as medecin_id, m.nom as medecin_nom, m.prenom as medecin_prenom
              FROM rapport r
              JOIN medecin m ON r.idmedecin = m.id
              WHERE ${column} = $1
-             ORDER BY r.date DESC, r.id DESC`,
+             ORDER BY r.date DESC, r.id DESC
+             LIMIT $2 OFFSET $3`,
+            [id, limit, offset]
+        );
+
+        // Comptage du total de rapports pour ce filtre
+        const countResult = await pool.query(
+            `SELECT COUNT(*)::int AS total
+             FROM rapport r
+             WHERE ${column} = $1`,
             [id]
         );
 
         // Transformation des résultats pour structurer l'objet medecin
-        return result.rows.map((row) => ({
+        const items = itemsResult.rows.map((row) => ({
             id: row.id,
             date: row.date,
             motif: row.motif,
@@ -45,6 +61,11 @@ export const findManyRapports = async (
                 prenom: row.medecin_prenom,
             },
         })) as RapportWithMedecin[];
+
+        return {
+            items,
+            total: countResult.rows[0].total,
+        };
     } catch (error) {
         const appError = mapDatabaseError(error as DatabaseErrorPayload);
         throw appError;
