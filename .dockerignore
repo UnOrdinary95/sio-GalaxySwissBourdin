@@ -1,0 +1,65 @@
+# Dépendances
+node_modules
+**/node_modules
+.pnpm-store
+
+# Builds et dist
+dist
+build
+**/.output
+**/.vite
+
+# Environnement (sensibles)
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE et OS
+.idea
+.vscode
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Tests et coverage
+coverage
+.nyc_output
+**/*.test.ts
+**/*.spec.ts
+vitest.config.*
+cypress
+playwright-report
+
+# Docker lui-même (optionnel mais propre)
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentation
+README.md
+*.md
+
+# Autres
+.github
+.prettierrc
+.eslintrc
+.eslintcache
+
+# TODO
+TODO.md
+
+# Autres dossiers et fichiers à ignorer
+notes/
+.opencode/

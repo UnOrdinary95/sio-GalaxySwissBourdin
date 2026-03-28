@@ -1,7 +1,35 @@
 services:
+    frontend:
+        container_name: gsb-frontend-hernani
+        build:
+            context: . # Racine du projet
+            dockerfile: apps/frontend/Dockerfile
+            args: # args utilisent les variables d'environnement => .env est chargé automatiquement par docker-compose (doit être à coté du docker-compose.yaml)
+                VITE_API_URL: ${VITE_API_URL:-http://localhost:3100}
+                VITE_API_PORT: ${VITE_API_PORT:-3100}
+        ports:
+            - '${FRONTEND_PORT:-5173}:80'
+
+    backend:
+        container_name: gsb-backend-hernani
+        build:
+            context: .
+            dockerfile: apps/backend/Dockerfile
+        ports:
+            - '${BACKEND_PORT:-3100}:3100'
+        env_file:
+            - .env
+        environment:
+            - NODE_ENV=production # Override NODE_ENV pour s'assurer que le backend tourne en mode production
+            - DATABASE_URL=${DATABASE_URL_DOCKER:-postgresql://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-gsb_db}} # Utilise l'URL Docker en production
+            - POSTGRES_HOST=postgres # Override POSTGRES_HOST pour Docker (localhost en dev)
+        depends_on:
+            postgres:
+                condition: service_healthy # Assure que PostgreSQL est prêt avant de démarrer le backend
+
     postgres:
         image: postgres:18-alpine
-        container_name: gsb-postgres
+        container_name: gsb-postgres-hernani
         restart: unless-stopped
         ports:
             - '${POSTGRES_PORT:-5432}:5432'
@@ -12,6 +40,14 @@ services:
         volumes:
             - postgres_data:/var/lib/postgresql/data
             - ./docker/init-db:/docker-entrypoint-initdb.d
+        healthcheck:
+            test: [
+                    'CMD-SHELL',
+                    'pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-gsb_db} -h localhost',
+                ] # Vérifie que PostgreSQL est prêt à accepter des connexions
+            interval: 5s
+            timeout: 5s
+            retries: 5
 
 volumes:
     postgres_data:
