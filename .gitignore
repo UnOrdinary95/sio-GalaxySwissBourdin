@@ -43,11 +43,6 @@ coverage/
 *.Zone.Identifier
 *:Zone.Identifier
 
-# PNPM monorepo
-.pnp.*
-.pnp.cjs
-# pnpm-lock.yaml
-
 # TODO
 TODO.md
 
