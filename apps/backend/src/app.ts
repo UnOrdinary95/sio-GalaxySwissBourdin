@@ -4,8 +4,13 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { FRONTEND_PORT, isProd } from './constants.js';
 import cookieParser from 'cookie-parser';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 import errorHandler from './middlewares/errorHandler.js';
 import authRouter from './routes/authRouter.js';
 import medecinRouter from './routes/medecinRouter.js';
@@ -62,7 +67,7 @@ app.use(
 app.use(express.json()); // Ajoute Content-Type: application/json automatiquement
 app.use(cookieParser()); // Parse les cookies
 
-const swaggerDocument = YAML.load('src/docs/swagger.yaml');
+const swaggerDocument = YAML.load(join(__dirname, 'docs/swagger.yaml'));
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
