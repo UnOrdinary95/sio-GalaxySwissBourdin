@@ -20,7 +20,7 @@ services:
         env_file:
             - .env
         environment:
-            - NODE_ENV=production # Override NODE_ENV pour s'assurer que le backend tourne en mode production
+            # - NODE_ENV=production # Override NODE_ENV pour s'assurer que le backend tourne en mode production
             - DATABASE_URL=${DATABASE_URL_DOCKER:-postgresql://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-gsb_db}} # Utilise l'URL Docker en production
             - POSTGRES_HOST=postgres # Override POSTGRES_HOST pour Docker (localhost en dev)
         depends_on:
