@@ -21,33 +21,33 @@ help:
 
 # Commandes principales
 d-up:
-	docker-compose up -d
+	docker compose up -d
 
 d-build:
-	docker-compose up --build -d
+	docker compose up --build -d
 
 d-down:
-	docker-compose down
+	docker compose down
 
 d-ps:
-	docker-compose ps
+	docker compose ps
 
 # Services individuels
 d-front:
-	docker-compose up -d frontend
+	docker compose up -d frontend
 
 d-back:
-	docker-compose up -d backend postgres
+	docker compose up -d backend postgres
 
 d-db:
-	docker-compose up -d postgres
+	docker compose up -d postgres
 
 # Logs
 d-logs-front:
-	docker-compose logs -f frontend
+	docker compose logs -f frontend
 
 d-logs-back:
-	docker-compose logs -f backend
+	docker compose logs -f backend
 
 d-logs-db:
-	docker-compose logs -f postgres
+	docker compose logs -f postgres
