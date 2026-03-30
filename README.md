@@ -36,9 +36,6 @@
 - **Authentification sécurisée** : Connexion des visiteurs médicaux avec gestion de session
 - **Gestion des médecins** : Lister, filtrer et consulter les informations des praticiens
 - **Rapports de visite** : Créer, modifier et consulter les rapports de visite
-- **Catalogue médicaments** : Consulter les médicaments et leurs familles
-- **Suivi des échantillons** : Enregistrer les médicaments présentés et la quantité d'échantillons offerts
-- **Design responsive** : Interface adaptée à tous les écrans
 
 ---
 
