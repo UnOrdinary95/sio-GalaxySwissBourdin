@@ -1,6 +1,6 @@
 <h1 align="center">
     <br>
-    <img src="apps/frontend/public/gsb-icon.png" width="200">
+    <img src="apps/frontend/public/web-app-manifest-512x512.png" width="200">
     <br>
     Galaxy Swiss Bourdin
     <br>
@@ -55,7 +55,7 @@
 ```bash
 # Cloner le projet
 git clone https://github.com/UnOrdinary95/sio-GalaxySwissBourdin.git
-cd GalaxySwissBourdin
+cd sio-GalaxySwissBourdin
 cp .env.example .env
 docker compose up --build -d # Lance en arrière-plan
 ```
